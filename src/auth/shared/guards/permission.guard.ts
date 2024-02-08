@@ -7,11 +7,13 @@ export function PermissionGuard(permission: any): Type<CanActivate> {
       const request = context.switchToHttp().getRequest<any>();
       const profile: number = request?.user?.profile;
 
+
       if (isArray(permission)) {
 
         return permission?.includes(profile)
 
       }
+
       return permission === profile;
     }
   }

@@ -124,13 +124,13 @@ export class UserService {
   }
 
   //? No errors 
-  async findAll(filter: FilterUser): Promise<Pagination<UserEntity>> {
+  async findAll(filter: FilterUser): Promise<Pagination<any>> {
 
     try {
       const { sort, orderBy, user_name, showActives, limit } = filter;
 
-
       const userQueryBuilder = this.userRepository.createQueryBuilder('user');
+
       if (showActives === "true") {
         userQueryBuilder.andWhere('user.user_status = true');
       } else if (showActives === "false") {
@@ -168,6 +168,8 @@ export class UserService {
       }
 
       const res = await userQueryBuilder.getMany()
+
+      console.log(res);
 
       return customPagination(res, page, limit, filter)
 

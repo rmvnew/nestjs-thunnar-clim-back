@@ -28,9 +28,6 @@ export class UserEntity {
     user_cpf?: string
 
     @Column({ nullable: true })
-    user_crp?: string
-
-    @Column({ nullable: true })
     user_enrollment?: string
 
     @Column({ nullable: true })
