@@ -1,18 +1,13 @@
 {
   "version": "0.2.0",
-  "configurations": [
-    {
-      "type": "pwa-node",
-      "request": "launch",
-      "name": "Debug NestJS",
-      "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/main.ts",
-      "preLaunchTask": "tsc: build - tsconfig.json",
-      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": ["--inspect", "${workspaceFolder}/src/main.ts"],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "openOnSessionStart"
-    }
+  "configurations": [{
+    "name": "Attach",
+    "port": 9222,
+    "request": "attach",
+    "skipFiles": [
+      "<node_internals>/**"
+    ],
+    "type": "node"
+  }
   ]
 }
