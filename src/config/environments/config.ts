@@ -23,11 +23,11 @@ export default () => ({
         database: process.env.DB_DATABASE,
         // schema:'dbo',
         entities: ['dist/**/*.entity{.ts,.js}'],
-        synchronize: true,
-        extra: {
-            trustServerCertificate: true,
+        synchronize: false,
+        // extra: {
+        //     trustServerCertificate: false,
 
-        },
+        // },
         logging: false,
         timezone: "Z"
     },

@@ -35,6 +35,8 @@ export class AuthService {
             throw new NotFoundException('User do not exist')
         }
 
+
+
         const checkPass = bcrypt.compareSync(userPassword, user.user_password);
 
         if (user && checkPass) {
@@ -74,7 +76,7 @@ export class AuthService {
         await this.userService.updateRefreshToken(userSaved.user_id, hashed_refresh_token);
 
 
-        let current_companies_id = []
+
 
 
         return {
@@ -83,7 +85,6 @@ export class AuthService {
             name: userSaved.user_name,
             login: userSaved.user_email,
             profile: userSaved.profile.profile_name,
-            // company_ids: current_companies_id,
             expires_in: this.configService.get('auth.token_expires_in')
         };
     }
@@ -92,11 +93,10 @@ export class AuthService {
 
     async refreshToken(id: string, refreshToken: string) {
 
-        const user = await this.userRepository.findOne({
-            where: {
-                user_id: id
-            }
-        })
+        const user = await this.userRepository.createQueryBuilder('user')
+            .leftJoinAndSelect('user.profile', 'profile')
+            .where('user.user_id = :user_id', { user_id: id })
+            .getOne()
 
         if (!user) {
             throw new HttpException('User with this enrollment does not exist', HttpStatus.NOT_FOUND);
@@ -123,15 +123,11 @@ export class AuthService {
         await this.userService.updateRefreshToken(user.user_id, hashed_refresh_token)
 
 
-
-
-
         return {
             access_token: access_token,
             refresh_token: refresh_token,
             name: user.user_name,
-            // company_ids: user.companys.company_id,
-            profile: user.user_profile_id,
+            profile: user.profile.profile_name,
             expires_in: expiration
         }
     }
@@ -150,14 +146,11 @@ export class AuthService {
 
     async getTokens(user: UserEntity): Promise<Tokens> {
 
-        let current_companies_id = []
-
         const [access_token, refresh_token] = await Promise.all([
             this.jwtService.signAsync({
                 sub: user.user_id,
                 name: user.user_name,
-                profile: user.profile.profile_id,
-                company_ids: current_companies_id
+                profile: user.profile.profile_name
             },
                 {
                     secret: process.env.JWT_SECRET,

@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker/locale/pt_BR';
 import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { cpf } from 'cpf-cnpj-validator';
-import { Pagination, paginate } from 'nestjs-typeorm-paginate';
+import { Pagination } from 'nestjs-typeorm-paginate';
 import * as QRCode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
@@ -123,14 +123,41 @@ export class UserService {
 
   }
 
-  //? No errors 
+  //^ No errors and tested 
   async findAll(filter: FilterUser): Promise<Pagination<UserEntity>> {
 
     try {
-      const { sort, orderBy, user_name, showActives, limit } = filter;
+      const { sort, orderBy, user_name, showActives, limit, page, route } = filter;
+
+      const userQueryBuilder = this.userRepository.createQueryBuilder('user')
+        .leftJoinAndSelect('user.profile', 'profile')
+        .leftJoinAndSelect('user.address', 'address')
+        .select([
+          'user.user_id',
+          'user.user_name',
+          'user.user_email',
+          'user.user_date_of_birth',
+          'user.user_phone',
+          'user.user_enrollment',
+          'user.user_status',
+          'user.create_at',
+          'user.update_at',
+
+        ])
+        .addSelect([
+          'profile.profile_name'
+        ])
+        .addSelect([
+          'address.address_id',
+          'address.address_city',
+          'address.address_district',
+          'address.address_home_number',
+          'address.address_state',
+          'address.address_street',
+          'address.address_zipcode',
+        ])
 
 
-      const userQueryBuilder = this.userRepository.createQueryBuilder('user');
       if (showActives === "true") {
         userQueryBuilder.andWhere('user.user_status = true');
       } else if (showActives === "false") {
@@ -148,28 +175,19 @@ export class UserService {
       } else {
         userQueryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }
-      const page = await paginate<UserEntity>(userQueryBuilder, filter);
 
+      //^ Calcular o ponto de início (offset) para a paginação
+      const skip = (page - 1) * limit;
 
-      for (let user of page.items) {
+      //^ Configurar a paginação na consulta
+      userQueryBuilder.skip(skip).take(limit);
 
-        if (user.user_id) {
+      //^ Realizar a consulta com paginação
+      const [result, total] = await userQueryBuilder.getManyAndCount();
 
-          const currentUser = await this.userRepository.createQueryBuilder('user')
-            .leftJoinAndSelect('user.address', 'address')
-            .where('user.user_id = :id', { id: user.user_id })
-            .getOne()
+      //^ Chamar a função de paginação com os resultados e a contagem total
+      return customPagination(result, page, limit, total, route, sort, orderBy);
 
-          const currentAddress = currentUser.address
-
-          user.address = currentAddress
-
-        }
-      }
-
-      const res = await userQueryBuilder.getMany()
-
-      return customPagination(res, page, limit, filter)
 
     } catch (error) {
       this.logger.error(`findAll error: ${error.message}`, error.stack)

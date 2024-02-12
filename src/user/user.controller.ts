@@ -44,7 +44,8 @@ export class UserController {
 
   //^ FIND ALL
   @Get()
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER))
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN))
+  // @PublicRoute()
   @ApiOperation({
     description: `# Esta rota busca todos usuários.
     Tipo: Autenticada. 
