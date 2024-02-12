@@ -103,7 +103,7 @@ export class UserService {
       const profile = await this.profileService.findById(profile_id)
 
       user.profile = profile
-      user.user_status = true
+      user.status = true
       user.user_first_access = true
       user.setTwoFactorSecret()
       user.user_enrollment = Utils.getInstance().getEnrollmentCode()
@@ -409,12 +409,12 @@ export class UserService {
         throw new NotFoundException(`User does not exist`)
       }
 
-      const { user_status: status } = userSaved
+      const { status: status } = userSaved
 
       console.log(userSaved);
 
 
-      userSaved.user_status = status === true ? false : true
+      userSaved.status = status === true ? false : true
 
       return this.userRepository.save(userSaved)
 

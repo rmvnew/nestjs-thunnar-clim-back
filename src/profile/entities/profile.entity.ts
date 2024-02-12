@@ -4,7 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 
-@Entity('PROFILE')
+@Entity('TB_PROFILE')
 export class ProfileEntity {
 
     @PrimaryGeneratedColumn('uuid')

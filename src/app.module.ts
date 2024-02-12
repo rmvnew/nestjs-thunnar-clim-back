@@ -10,6 +10,7 @@ import { SwaggerModule } from './config/swagger/swagger.module';
 import { EmailModule } from './mail/mail.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './user/user.module';
     ProfileModule,
     EmailModule,
     AddressModule,
+    ClientModule,
   ],
   controllers: [],
   providers: [

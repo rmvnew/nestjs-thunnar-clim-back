@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity('ADDRESS')
+@Entity('TB_ADDRESS')
 export class Address {
 
 

@@ -3,7 +3,7 @@ import { Address } from 'src/address/entities/address.entity';
 import { ProfileEntity } from "src/profile/entities/profile.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity('USER')
+@Entity('TB_USER')
 export class UserEntity {
 
     @PrimaryGeneratedColumn('uuid')
@@ -52,7 +52,7 @@ export class UserEntity {
     user_profile_id: string
 
     @Column()
-    user_status: boolean
+    status: boolean
 
     @Column()
     user_first_access: boolean
