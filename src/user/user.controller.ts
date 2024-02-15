@@ -26,6 +26,7 @@ export class UserController {
   //^ CREATE 
   @Post()
   @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
+
   @ApiOperation({
     description: `# Esta rota adiciona um novo usuário.
     Tipo: Autenticada. 

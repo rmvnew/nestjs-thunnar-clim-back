@@ -50,7 +50,7 @@ export class ClientService {
 
   }
 
-  //? feito
+  //^ feito e testado
   async findByName(name: string) {
 
     try {
@@ -78,9 +78,9 @@ export class ClientService {
       const queryBuilder = this.clientRepository.createQueryBuilder('client')
 
       if (showActives === "true") {
-        queryBuilder.andWhere('user.user_status = true');
+        queryBuilder.andWhere('client.status = true');
       } else if (showActives === "false") {
-        queryBuilder.andWhere('user.user_status = false');
+        queryBuilder.andWhere('client.status = false');
       }
 
       if (client_name) {
@@ -106,7 +106,7 @@ export class ClientService {
   }
 
   //? feito
-  async findById(id: number) {
+  async findById(id: string) {
 
     try {
 
@@ -127,12 +127,44 @@ export class ClientService {
 
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  //? feito
+  async update(id: string, updateClientDto: UpdateClientDto) {
+
+    const is_registered = await this.findById(id)
+
+    if (!is_registered) {
+      throw new NotFoundException(`Cliente não encontrado!`)
+    }
+
+    const { client_name, client_is_company, client_cnpj } = updateClientDto
+
+    if (client_is_company && !client_cnpj) {
+      throw new BadRequestException(`Para empresa informe o cnpj!`)
+    }
+
+    const client = await this.clientRepository.preload({
+      client_id: id,
+      ...updateClientDto
+    })
+
+    if (client_name) {
+      client.client_name = client_name.toUpperCase()
+    }
+
+    return this.clientRepository.save(client)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  //? feito
+  async remove(id: string) {
+
+    const is_registered = await this.findById(id)
+
+    if (!is_registered) {
+      throw new NotFoundException(`Cliente não encontrado!`)
+    }
+
+    this.clientRepository.remove(is_registered)
+
   }
 }
 
