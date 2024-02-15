@@ -17,10 +17,10 @@ import { Validations } from 'src/common/validations';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
 import { ProfileService } from './../profile/profile.service';
-import { FilterUser } from './dto/Filter.user';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Qrcode2fa } from './dto/qrcode.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FilterUser } from './dto/user.filter';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -578,6 +578,7 @@ export class UserService {
       setTimeout(async () => {
         await this.clearCode(user)
       }, 5 * 60 * 1000)
+
 
 
     } catch (error) {

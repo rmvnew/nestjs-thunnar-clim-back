@@ -6,10 +6,10 @@ import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { PublicRoute } from 'src/common/decorators/public_route.decorator';
 import { RecoverInterface } from 'src/common/interfaces/recover.interface';
 import { getUserPath } from 'src/common/routes.path';
-import { FilterUser } from './dto/Filter.user';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Qrcode2fa } from './dto/qrcode.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FilterUser } from './dto/user.filter';
 import { UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 

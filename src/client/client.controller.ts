@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(private readonly clientService: ClientService) { }
 
   @Post()
   create(@Body() createClientDto: CreateClientDto) {
@@ -19,7 +19,7 @@ export class ClientController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.clientService.findOne(+id);
+    return this.clientService.findById(+id);
   }
 
   @Patch(':id')
