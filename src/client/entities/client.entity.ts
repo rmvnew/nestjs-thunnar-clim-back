@@ -8,19 +8,19 @@ export class Client extends EntityBase {
     @PrimaryGeneratedColumn('uuid')
     client_id: string
 
-    @Column()
+    @Column({ unique: true })
     client_name: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, unique: true })
     client_cnpj?: string
 
-    @Column({ nullable: true })
+    @Column({ nullable: true, unique: true })
     client_cpf?: string
 
-    @Column()
+    @Column({ unique: true })
     client_phone: string
 
-    @Column()
+    @Column({ unique: true })
     client_email: string
 
     @Column()

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsNotEmpty, IsOptional, Length, ValidateIf } from "class-validator"
+import { Type } from "class-transformer"
+import { IsNotEmpty, IsOptional, Length, ValidateIf, ValidateNested } from "class-validator"
 import { CreateAddressDto } from "src/address/dto/create-address.dto"
 import { IsCnpj } from "src/common/decorators/IsCnpj.decorator"
 import { IsCpf } from "src/common/decorators/IsCpf.decorator"
@@ -39,6 +40,8 @@ export class CreateClientDto {
 
 
     @IsOptional()
+    @ValidateNested()
+    @Type(() => CreateAddressDto)
     address?: CreateAddressDto
 
 }

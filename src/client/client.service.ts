@@ -77,6 +77,7 @@ export class ClientService {
       const { sort, orderBy, client_name, showActives } = filter;
 
       const queryBuilder = this.clientRepository.createQueryBuilder('client')
+        .leftJoinAndSelect('client.address', 'address')
 
       if (showActives === "true") {
         queryBuilder.andWhere('client.status = true');
