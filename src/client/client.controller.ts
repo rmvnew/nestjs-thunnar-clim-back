@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { ClientService } from './client.service';
@@ -31,6 +31,12 @@ export class ClientController {
   }
 
   @Get()
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
+  @ApiOperation({
+    description: `# Esta rota busca todos clientes.
+    Tipo: Autenticada. 
+    Acesso: [Administrador, Psicólogo, Atendente]` })
+  @ApiQuery({ name: 'client_name', required: false, description: '### Este é um filtro opcional!' })
   async findAll(
     @Query() filter: ClientFilter
   ) {
@@ -42,7 +48,7 @@ export class ClientController {
     return this.clientService.findById(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
     return this.clientService.update(id, updateClientDto);
   }

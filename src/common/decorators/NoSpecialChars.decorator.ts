@@ -1,14 +1,15 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { CpfValidation } from './regex/IsCpf_and_IsCNPJ';
+import { NoSpecialCharsValidation } from './regex/NoSpecialCharsValidation';
 
-export function IsCpf(validationOptions?: ValidationOptions) {
+export function NoSpecialChars(validationOptions?: ValidationOptions) {
     return function (object: Object, propertyName: string) {
         registerDecorator({
-            name: 'isCpf',
+            name: 'noSpecialChars',
             target: object.constructor,
             propertyName: propertyName,
             options: validationOptions,
-            validator: CpfValidation.getInstance(),
+            validator: NoSpecialCharsValidation,
+            constraints: [],
         });
     };
 }

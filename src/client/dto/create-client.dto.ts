@@ -3,6 +3,7 @@ import { IsNotEmpty, IsOptional, Length, ValidateIf } from "class-validator"
 import { CreateAddressDto } from "src/address/dto/create-address.dto"
 import { IsCnpj } from "src/common/decorators/IsCnpj.decorator"
 import { IsCpf } from "src/common/decorators/IsCpf.decorator"
+import { NoSpecialChars } from "src/common/decorators/NoSpecialChars.decorator"
 
 
 export class CreateClientDto {
@@ -11,6 +12,7 @@ export class CreateClientDto {
     @ApiProperty()
     @IsNotEmpty()
     @Length(5, 50, { message: 'O Nome deve ter entre 5 e 50 caracteres.' })
+    @NoSpecialChars({ message: 'O nome não pode conter caracteres especiais, espaços duplos ou espaços no início/fim.' })
     client_name: string
 
     @ApiProperty()

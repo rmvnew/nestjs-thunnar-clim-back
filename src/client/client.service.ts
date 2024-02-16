@@ -23,7 +23,7 @@ export class ClientService {
 
     try {
 
-      const { client_name, client_is_company, client_cnpj } = createClientDto
+      const { client_name, client_is_company, client_cnpj, client_responsible } = createClientDto
 
       const is_exists = await this.findByName(client_name.toUpperCase())
 
@@ -38,6 +38,7 @@ export class ClientService {
       const client = this.clientRepository.create(createClientDto)
 
       client.client_name = client_name.toUpperCase()
+      client.client_responsible = client_responsible.toUpperCase()
 
 
       return await this.clientRepository.save(client)
@@ -69,7 +70,7 @@ export class ClientService {
 
   }
 
-  //? feito
+  //^ feito e testado
   async findAll(filter: ClientFilter) {
 
     try {
@@ -105,7 +106,7 @@ export class ClientService {
 
   }
 
-  //? feito
+  //^ feito e testado 
   async findById(id: string) {
 
     try {
@@ -115,13 +116,13 @@ export class ClientService {
         .getOne()
 
       if (!current_client) {
-        throw new NotFoundException(`Client não encontrado!`)
+        throw new NotFoundException(`Cliente não encontrado!`)
       }
 
       return current_client
 
     } catch (error) {
-      this.logger.error(`Error: findById - client`)
+      this.logger.error(`Error: findById - client: ${error.message}`)
       throw error
     }
 
@@ -136,7 +137,7 @@ export class ClientService {
       throw new NotFoundException(`Cliente não encontrado!`)
     }
 
-    const { client_name, client_is_company, client_cnpj } = updateClientDto
+    const { client_name, client_is_company, client_cnpj, client_responsible } = updateClientDto
 
     if (client_is_company && !client_cnpj) {
       throw new BadRequestException(`Para empresa informe o cnpj!`)
@@ -149,6 +150,10 @@ export class ClientService {
 
     if (client_name) {
       client.client_name = client_name.toUpperCase()
+    }
+
+    if (client_responsible) {
+      client.client_responsible = client_responsible.toUpperCase()
     }
 
     return this.clientRepository.save(client)

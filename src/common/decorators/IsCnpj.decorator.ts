@@ -1,5 +1,5 @@
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { CnpjValidation } from '../constraints';
+import { CnpjValidation } from './regex/IsCpf_and_IsCNPJ';
 
 export function IsCnpj(validationOptions?: ValidationOptions) {
     return function (object: Object, propertyName: string) {
