@@ -18,7 +18,7 @@ export class ClientService {
     private readonly clientRepository: Repository<Client>
   ) { }
 
-  //? feito 
+  //^ feito e testado
   async create(createClientDto: CreateClientDto) {
 
     try {
@@ -74,7 +74,7 @@ export class ClientService {
   async findAll(filter: ClientFilter) {
 
     try {
-      const { sort, orderBy, client_name, showActives, limit, page, route } = filter;
+      const { sort, orderBy, client_name, showActives } = filter;
 
       const queryBuilder = this.clientRepository.createQueryBuilder('client')
 
@@ -128,7 +128,7 @@ export class ClientService {
 
   }
 
-  //? feito
+  //^ feito e testado 
   async update(id: string, updateClientDto: UpdateClientDto) {
 
     const is_registered = await this.findById(id)
@@ -159,7 +159,7 @@ export class ClientService {
     return this.clientRepository.save(client)
   }
 
-  //? feito
+  //^ feito e testado 
   async remove(id: string) {
 
     const is_registered = await this.findById(id)
