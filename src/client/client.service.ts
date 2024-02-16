@@ -113,6 +113,7 @@ export class ClientService {
     try {
 
       const current_client = await this.clientRepository.createQueryBuilder('client')
+        .leftJoinAndSelect('client.address', 'address')
         .where('client.client_id = :id', { id })
         .getOne()
 
@@ -133,12 +134,13 @@ export class ClientService {
   async update(id: string, updateClientDto: UpdateClientDto) {
 
     const is_registered = await this.findById(id)
+    const current_address = is_registered.address
 
     if (!is_registered) {
       throw new NotFoundException(`Cliente não encontrado!`)
     }
 
-    const { client_name, client_is_company, client_cnpj, client_responsible } = updateClientDto
+    const { client_name, client_is_company, client_cnpj, client_responsible, address } = updateClientDto
 
     if (client_is_company && !client_cnpj) {
       throw new BadRequestException(`Para empresa informe o cnpj!`)
@@ -148,6 +150,16 @@ export class ClientService {
       client_id: id,
       ...updateClientDto
     })
+
+    if (address) {
+      current_address.address_zipcode = address.address_zipcode
+      current_address.address_city = address.address_city
+      current_address.address_district = address.address_district
+      current_address.address_state = address.address_state
+      current_address.address_street = address.address_street
+      current_address.address_home_number = address.address_home_number
+      client.address = current_address
+    }
 
     if (client_name) {
       client.client_name = client_name.toUpperCase()
