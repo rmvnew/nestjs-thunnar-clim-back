@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { ClientService } from './client.service';
 import { ClientFilter } from './dto/client.filter';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -26,8 +27,12 @@ export class ClientController {
     description: '## Schema padrão para criar usuário.',
     type: CreateClientDto
   })
-  async create(@Body() createClientDto: CreateClientDto) {
-    return this.clientService.create(createClientDto);
+
+  async create(
+    @Req() req: RequestWithUser,
+    @Body() createClientDto: CreateClientDto
+  ) {
+    return this.clientService.create(createClientDto, req);
   }
 
   @Get()

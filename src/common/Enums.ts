@@ -65,3 +65,17 @@ export enum UserGenderType {
 }
 
 
+export enum TypeDepartments {
+    AUTH = 'AUTH',
+    CLIENT = 'CLIENT',
+}
+
+
+export enum TypeEctions {
+    SIGNIN = 'SIGNIN',
+    SIGNOUT = 'SIGNOUT',
+    CREATE = 'CREATE',
+    UPDATE = 'UPDATE',
+    CHANGE_STATUS = 'CHANGE_STATUS',
+    DELETE = 'DELETE'
+}

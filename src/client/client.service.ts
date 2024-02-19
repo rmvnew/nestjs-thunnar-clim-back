@@ -1,8 +1,12 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortingType } from 'src/common/Enums';
+import { SortingType, TypeDepartments, TypeEctions } from 'src/common/Enums';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
+import { CreateHistoricDto } from 'src/historic/dto/create-historic.dto';
+import { HistoricService } from 'src/historic/historic.service';
 import { Repository } from 'typeorm';
+import { UserService } from '../user/user.service';
 import { ClientFilter } from './dto/client.filter';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
@@ -15,11 +19,15 @@ export class ClientService {
 
   constructor(
     @InjectRepository(Client)
-    private readonly clientRepository: Repository<Client>
+    private readonly clientRepository: Repository<Client>,
+    private readonly historicService: HistoricService,
+    private readonly userService: UserService
   ) { }
 
   //^ feito e testado
-  async create(createClientDto: CreateClientDto) {
+  async create(createClientDto: CreateClientDto, req: RequestWithUser) {
+
+
 
     try {
 
@@ -38,8 +46,22 @@ export class ClientService {
       const client = this.clientRepository.create(createClientDto)
 
       client.client_name = client_name.toUpperCase()
+
       client.client_responsible = client_responsible.toUpperCase()
 
+      this.logger.debug('Sub: ', req.user.sub);
+
+      const user = await this.userService.findById(req.user.sub)
+
+
+      const historic: CreateHistoricDto = {
+        historic_department: TypeDepartments.CLIENT.toString(),
+        historic_occurrence: TypeEctions.CREATE,
+        user: user
+      }
+
+
+      await this.historicService.create(historic)
 
       return await this.clientRepository.save(client)
 

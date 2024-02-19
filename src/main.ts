@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
@@ -7,6 +7,9 @@ import { SwaggerService } from './config/swagger/swagger.service';
 dotenv.config();
 
 async function bootstrap() {
+
+  const logger = new Logger('Bootstrap')
+
   try {
     const app = await NestFactory.create(AppModule);
 
@@ -29,7 +32,7 @@ async function bootstrap() {
 
 
   } catch (error) {
-    console.log('->', error);
+    logger.error('Main error: ', error)
   }
 }
 bootstrap();

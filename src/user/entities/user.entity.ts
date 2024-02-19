@@ -1,7 +1,8 @@
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
+import { Historic } from 'src/historic/entities/historic.entity';
 import { ProfileEntity } from "src/profile/entities/profile.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('TB_USER')
 export class UserEntity {
@@ -73,6 +74,9 @@ export class UserEntity {
     @OneToOne(() => Address, { nullable: true, cascade: true, eager: true })
     @JoinColumn({ name: 'address_id' })
     address?: Address
+
+    @OneToMany(() => Historic, historic => historic.user)
+    historics: Historic[];
 
     setTwoFactorSecret() {
         this.user_2fa_secret = speakeasy.generateSecret({ length: 20 }).base32

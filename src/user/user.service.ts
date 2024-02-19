@@ -139,7 +139,7 @@ export class UserService {
           'user.user_date_of_birth',
           'user.user_phone',
           'user.user_enrollment',
-          'user.user_status',
+          'user.status',
           'user.create_at',
           'user.update_at',
 
@@ -159,9 +159,9 @@ export class UserService {
 
 
       if (showActives === "true") {
-        userQueryBuilder.andWhere('user.user_status = true');
+        userQueryBuilder.andWhere('user.status = true');
       } else if (showActives === "false") {
-        userQueryBuilder.andWhere('user.user_status = false');
+        userQueryBuilder.andWhere('user.status = false');
       }
 
 
@@ -411,7 +411,6 @@ export class UserService {
 
       const { status: status } = userSaved
 
-      console.log(userSaved);
 
 
       userSaved.status = status === true ? false : true
