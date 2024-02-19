@@ -31,6 +31,8 @@ export class ClientService {
 
     try {
 
+      const logged_in_user_id = req.user.sub
+
       const { client_name, client_is_company, client_cnpj, client_responsible } = createClientDto
 
       const is_exists = await this.findByName(client_name.toUpperCase())
@@ -49,9 +51,9 @@ export class ClientService {
 
       client.client_responsible = client_responsible.toUpperCase()
 
-      this.logger.debug('Sub: ', req.user.sub);
 
-      const user = await this.userService.findById(req.user.sub)
+
+      const user = await this.userService.findById(logged_in_user_id)
 
 
       const historic: CreateHistoricDto = {
