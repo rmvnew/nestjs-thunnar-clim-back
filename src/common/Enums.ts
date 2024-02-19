@@ -71,7 +71,7 @@ export enum TypeDepartments {
 }
 
 
-export enum TypeEctions {
+export enum TypeActions {
     SIGNIN = 'SIGNIN',
     SIGNOUT = 'SIGNOUT',
     CREATE = 'CREATE',

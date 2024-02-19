@@ -1,9 +1,8 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortingType, TypeDepartments, TypeEctions } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments } from 'src/common/Enums';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
-import { CreateHistoricDto } from 'src/historic/dto/create-historic.dto';
 import { HistoricService } from 'src/historic/historic.service';
 import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
@@ -31,7 +30,7 @@ export class ClientService {
 
     try {
 
-      const logged_in_user_id = req.user.sub
+
 
       const { client_name, client_is_company, client_cnpj, client_responsible } = createClientDto
 
@@ -53,17 +52,12 @@ export class ClientService {
 
 
 
-      const user = await this.userService.findById(logged_in_user_id)
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.CLIENT,
+        TypeActions.CREATE
+      )
 
-
-      const historic: CreateHistoricDto = {
-        historic_department: TypeDepartments.CLIENT.toString(),
-        historic_occurrence: TypeEctions.CREATE,
-        user: user
-      }
-
-
-      await this.historicService.create(historic)
 
       return await this.clientRepository.save(client)
 
@@ -155,7 +149,7 @@ export class ClientService {
   }
 
   //^ feito e testado 
-  async update(id: string, updateClientDto: UpdateClientDto) {
+  async update(id: string, updateClientDto: UpdateClientDto, req: RequestWithUser) {
 
     const is_registered = await this.findById(id)
     const current_address = is_registered.address
@@ -193,17 +187,29 @@ export class ClientService {
       client.client_responsible = client_responsible.toUpperCase()
     }
 
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.CLIENT,
+      TypeActions.UPDATE
+    )
+
     return this.clientRepository.save(client)
   }
 
   //^ feito e testado 
-  async remove(id: string) {
+  async remove(id: string, req: RequestWithUser) {
 
     const is_registered = await this.findById(id)
 
     if (!is_registered) {
       throw new NotFoundException(`Cliente não encontrado!`)
     }
+
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.CLIENT,
+      TypeActions.DELETE
+    )
 
     this.clientRepository.remove(is_registered)
 

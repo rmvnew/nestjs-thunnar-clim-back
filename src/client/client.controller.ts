@@ -54,12 +54,19 @@ export class ClientController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientService.update(id, updateClientDto);
+  update(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+    @Body() updateClientDto: UpdateClientDto
+  ) {
+    return this.clientService.update(id, updateClientDto, req);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientService.remove(id);
+  remove(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string
+  ) {
+    return this.clientService.remove(id, req);
   }
 }
