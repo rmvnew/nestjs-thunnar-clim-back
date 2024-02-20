@@ -224,10 +224,11 @@ export class UserController {
     type: UpdateUserDto
   })
   async update(
+    @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<UserEntity> {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(id, updateUserDto, req);
   }
 
   //^ USER CHANGE STATUS
@@ -239,9 +240,10 @@ export class UserController {
     Acesso: [Administrador]` })
   @ApiParam({ name: 'id', description: '### Id do usuário. ' })
   async changeStatus(
+    @Req() req: RequestWithUser,
     @Param('id') id: string
   ): Promise<UserEntity> {
-    return this.userService.changeStatus(id);
+    return this.userService.changeStatus(id, req);
   }
 
 }

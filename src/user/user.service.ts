@@ -115,6 +115,8 @@ export class UserService {
         userSaved
       )
 
+      return userSaved
+
     } catch (error) {
       this.logger.warn(`createUser error: ${error.message}`, error.stack);
       throw error
@@ -279,7 +281,11 @@ export class UserService {
   }
 
   //? No errors 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    req: RequestWithUser
+  ): Promise<UserEntity> {
 
     try {
 
@@ -289,10 +295,8 @@ export class UserService {
         user_profile_id: profile_id,
         user_date_of_birth,
         user_phone,
-        user_genre,
         user_cpf,
         user_rg,
-        psychologist_id
       } = updateUserDto
 
 
@@ -311,16 +315,6 @@ export class UserService {
       if (user_name) {
 
         user.user_name = user_name.toUpperCase()
-
-        Validations.getInstance().validateWithRegex(
-          user.user_name,
-          ValidType.NO_MANY_SPACE,
-          ValidType.NO_SPECIAL_CHARACTER,
-          ValidType.IS_STRING
-        )
-
-        Validations.getInstance().verifyLength(
-          user.user_name, 'Name', 5, 40)
 
       }
 
@@ -358,7 +352,15 @@ export class UserService {
 
 
 
-      await this.userRepository.save(user)
+      const userSaved = await this.userRepository.save(user)
+
+
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        TypeActions.UPDATE,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+      )
 
       return this.findById(id)
 
@@ -388,7 +390,7 @@ export class UserService {
   }
 
   //? No errors 
-  async changeStatus(id: string) {
+  async changeStatus(id: string, req: RequestWithUser) {
 
     try {
 
@@ -402,7 +404,16 @@ export class UserService {
 
       userSaved.status = status === true ? false : true
 
-      return this.userRepository.save(userSaved)
+      const current_user = await this.userRepository.save(userSaved)
+
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        current_user.status ? TypeActions.ACTIVATED : TypeActions.DISABLED,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+      )
+
+      return current_user
 
     } catch (error) {
       this.logger.error(`changeStatus error: ${error.message}`, error.stack)
