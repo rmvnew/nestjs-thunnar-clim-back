@@ -79,7 +79,8 @@ export class HistoricService {
           'hist.update_at',
           'hist.status',
         ]).addSelect([
-          'user.user_name'
+          'user.user_id',
+          'user.user_name',
         ])
 
 

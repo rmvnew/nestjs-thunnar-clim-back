@@ -411,8 +411,6 @@ export class UserService {
 
       const { status: status } = userSaved
 
-
-
       userSaved.status = status === true ? false : true
 
       return this.userRepository.save(userSaved)
