@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
@@ -19,12 +19,12 @@ export class ClientController {
   @Post()
   @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
   @ApiOperation({
-    description: `# Esta rota adiciona um novo usuário.
+    description: `# Esta rota adiciona um novo cliente.
     Tipo: Autenticada. 
     Acesso: [Administrador,Gerente e Dono]` })
 
   @ApiBody({
-    description: '## Schema padrão para criar usuário.',
+    description: '## Schema padrão para criar cliente.',
     type: CreateClientDto
   })
 
@@ -40,7 +40,7 @@ export class ClientController {
   @ApiOperation({
     description: `# Esta rota busca todos clientes.
     Tipo: Autenticada. 
-    Acesso: [Administrador, Psicólogo, Atendente]` })
+    Acesso: [Administrador,Gerente,Dono]` })
   @ApiQuery({ name: 'client_name', required: false, description: '### Este é um filtro opcional!' })
   async findAll(
     @Query() filter: ClientFilter
@@ -49,11 +49,27 @@ export class ClientController {
   }
 
   @Get(':id')
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @ApiOperation({
+    description: `# Esta rota busca um Cliente pelo Id.
+    Tipo: Autenticada. 
+    Acesso: [Administrador,Gerente,Dono]` })
+  @ApiParam({ name: 'id', description: 'Id do cliente. ' })
   async findOne(@Param('id') id: string) {
     return this.clientService.findById(id);
   }
 
   @Put(':id')
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
+  @ApiOperation({
+    description: `# Esta rota atualiza um cliente pelo Id.
+    Tipo: Autenticada. 
+    Acesso: [Administrador,Gerente,Dono]` })
+  @ApiParam({ name: 'id', description: 'Id do cliente. ' })
+  @ApiBody({
+    description: '## Schema padrão para atualizar um cliente. ',
+    type: UpdateClientDto
+  })
   async update(
     @Req() req: RequestWithUser,
     @Param('id') id: string,
@@ -63,6 +79,12 @@ export class ClientController {
   }
 
   @Patch(':id')
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
+  @ApiOperation({
+    description: `# Esta rota habilita e desabilita um cliente pelo Id.
+    Tipo: Autenticada. 
+    Acesso: [Administrador,Gerente,Dono]` })
+  @ApiParam({ name: 'id', description: '### Id do cliente. ' })
   async changeStatus(
     @Req() req: RequestWithUser,
     @Param('id') id: string,
@@ -72,7 +94,13 @@ export class ClientController {
   }
 
   @Delete(':id')
-  remove(
+  @UseGuards(PermissionGuard(AccessProfile.ADMIN_MANAGER_OWNER))
+  @ApiOperation({
+    description: `# Esta rota Deleta um cliente pelo Id.
+    Tipo: Autenticada. 
+    Acesso: [Administrador,Gerente,Dono]` })
+  @ApiParam({ name: 'id', description: '### Id do cliente. ' })
+  async remove(
     @Req() req: RequestWithUser,
     @Param('id') id: string
   ) {

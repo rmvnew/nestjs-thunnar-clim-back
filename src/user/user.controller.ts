@@ -50,7 +50,7 @@ export class UserController {
   @ApiOperation({
     description: `# Esta rota busca todos usuários.
     Tipo: Autenticada. 
-    Acesso: [Administrador, Psicólogo, Atendente]` })
+    Acesso: [Administrador]` })
   @ApiQuery({ name: 'user_name', required: false, description: '### Este é um filtro opcional!' })
   async findAll(
     @Query() filter: FilterUser
@@ -201,7 +201,7 @@ export class UserController {
   @ApiOperation({
     description: `# Esta rota busca um usuário pelo Id.
     Tipo: Autenticada. 
-    Acesso: [Administrador, Psicólogo, Atendente]` })
+    Acesso: [Administrador,Gerente,Dono]` })
   @ApiParam({ name: 'id', description: 'Id do usuário. ' })
   async findOne(
     @Param('id') id: string
@@ -215,7 +215,7 @@ export class UserController {
   @ApiOperation({
     description: `# Esta rota atualiza um usuário pelo Id.
     Tipo: Autenticada. 
-    Acesso: [Administrador, Psicólogo, Atendente]` })
+    Acesso: [Administrador,Gerente,Dono]` })
   @ApiParam({ name: 'id', description: 'Id do usuário. ' })
   @ApiBody({
     description: '## Schema padrão para atualizar um usuário. ',
@@ -234,7 +234,7 @@ export class UserController {
   @ApiOperation({
     description: `# Esta rota habilita e desabilita um usuário pelo Id.
     Tipo: Autenticada. 
-    Acesso: [Administrador, Psicólogo]` })
+    Acesso: [Administrador]` })
   @ApiParam({ name: 'id', description: '### Id do usuário. ' })
   async changeStatus(
     @Param('id') id: string
