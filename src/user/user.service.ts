@@ -12,7 +12,7 @@ import { CustomDate } from 'src/common/custom.date';
 import { CodeRecoverInterface } from 'src/common/interfaces/email.interface';
 import { UserFake } from 'src/common/interfaces/fake.interface';
 import { RecoverInterface } from 'src/common/interfaces/recover.interface';
-import { customPagination } from 'src/common/pagination/custom.pagination';
+import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { Validations } from 'src/common/validations';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
@@ -70,20 +70,9 @@ export class UserService {
       user.user_name = user_name.toUpperCase()
 
       Validations.getInstance().validateWithRegex(
-        user.user_name,
-        ValidType.NO_MANY_SPACE,
-        ValidType.NO_SPECIAL_CHARACTER,
-        ValidType.IS_STRING
-      )
-
-      Validations.getInstance().validateWithRegex(
         user.user_email,
         ValidType.IS_EMAIL,
         ValidType.NO_SPACE
-      )
-
-      Validations.getInstance().verifyLength(
-        user.user_name, 'Name', 5, 40
       )
 
       const userIsRegistered = await this.findByName(user.user_name)
@@ -176,17 +165,7 @@ export class UserService {
         userQueryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }
 
-      //^ Calcular o ponto de início (offset) para a paginação
-      const skip = (page - 1) * limit;
-
-      //^ Configurar a paginação na consulta
-      userQueryBuilder.skip(skip).take(limit);
-
-      //^ Realizar a consulta com paginação
-      const [result, total] = await userQueryBuilder.getManyAndCount();
-
-      //^ Chamar a função de paginação com os resultados e a contagem total
-      return customPagination(result, page, limit, total, route, sort, orderBy);
+      return CustomPagination.getInstance().getPage(userQueryBuilder, filter)
 
 
     } catch (error) {

@@ -1,11 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, Length, Matches } from 'class-validator';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { NoSpecialChars } from 'src/common/decorators/NoSpecialChars.decorator';
 
 export class CreateUserDto {
 
     @ApiProperty()
+    @IsNotEmpty()
     @Length(5, 50, { message: 'O Nome deve ter entre 5 e 50 caracteres.' })
+    @NoSpecialChars({ message: 'O nome não pode conter caracteres especiais, espaços duplos ou espaços no início/fim.' })
     user_name: string;
 
     @ApiProperty()
