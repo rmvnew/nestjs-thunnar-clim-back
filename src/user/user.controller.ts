@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, Request, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { PublicRoute } from 'src/common/decorators/public_route.decorator';
 import { RecoverInterface } from 'src/common/interfaces/recover.interface';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { getUserPath } from 'src/common/routes.path';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Qrcode2fa } from './dto/qrcode.dto';
@@ -37,9 +38,10 @@ export class UserController {
     type: CreateUserDto
   })
   async create(
+    @Req() req: RequestWithUser,
     @Body() createUserDto: CreateUserDto
   ): Promise<UserEntity> {
-    return this.userService.create(createUserDto);
+    return this.userService.create(createUserDto, req);
   }
 
 

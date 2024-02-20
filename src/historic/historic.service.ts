@@ -1,9 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SortingType, TypeActions, TypeDepartments } from 'src/common/Enums';
 import { CustomDate } from 'src/common/custom.date';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
+import { UserEntity } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateHistoricDto } from './dto/create-historic.dto';
@@ -18,6 +19,7 @@ export class HistoricService {
   constructor(
     @InjectRepository(Historic)
     private readonly historicRepository: Repository<Historic>,
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService
   ) { }
 
@@ -43,10 +45,12 @@ export class HistoricService {
     req: RequestWithUser,
     typeDepartment: TypeDepartments,
     typeActions: TypeActions,
-    details?: string
+    details?: string,
+    current_user?: UserEntity,
+
   ) {
 
-    const logged_in_user_id = req.user.sub
+    const logged_in_user_id = req ? req.user.sub : null
 
     const user = await this.userService.findById(logged_in_user_id)
 
@@ -54,7 +58,7 @@ export class HistoricService {
       historic_department: typeDepartment,
       historic_occurrence: typeActions,
       historic_details: details,
-      user: user
+      user: user ? user : current_user
     }
 
 

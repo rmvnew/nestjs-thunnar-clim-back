@@ -1,19 +1,21 @@
 import { faker } from '@faker-js/faker/locale/pt_BR';
-import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { cpf } from 'cpf-cnpj-validator';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import * as QRCode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
-import { SortingType, ValidType } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments, ValidType } from 'src/common/Enums';
 import { Utils } from 'src/common/Utils';
 import { CustomDate } from 'src/common/custom.date';
 import { CodeRecoverInterface } from 'src/common/interfaces/email.interface';
 import { UserFake } from 'src/common/interfaces/fake.interface';
 import { RecoverInterface } from 'src/common/interfaces/recover.interface';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { Validations } from 'src/common/validations';
+import { HistoricService } from 'src/historic/historic.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
 import { ProfileService } from './../profile/profile.service';
@@ -33,18 +35,19 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly ProfileService: ProfileService,
     private readonly profileService: ProfileService,
     private readonly mailservice: MailService,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
+    @Inject(forwardRef(() => HistoricService))
+    private historicService: HistoricService,
 
 
   ) { }
 
 
   //? No errors 
-  async create(createUserDto: CreateUserDto): Promise<any> {
+  async create(createUserDto: CreateUserDto, req?: RequestWithUser): Promise<any> {
 
     try {
 
@@ -102,8 +105,15 @@ export class UserService {
       const dateParts = user_date_of_birth.split("/");
       user.user_date_of_birth = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
 
-      const userSaved = this.userRepository.save(user)
+      const userSaved = await this.userRepository.save(user)
 
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        TypeActions.CREATE,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+        userSaved
+      )
 
     } catch (error) {
       this.logger.warn(`createUser error: ${error.message}`, error.stack);
