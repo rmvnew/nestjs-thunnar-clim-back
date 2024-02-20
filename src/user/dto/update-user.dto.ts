@@ -1,6 +1,8 @@
 
 import { ApiProperty } from '@nestjs/swagger';
-import { UserGenderType } from 'src/common/Enums';
+import { Type } from 'class-transformer';
+import { IsOptional, ValidateNested } from 'class-validator';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 
 
 export class UpdateUserDto {
@@ -19,15 +21,14 @@ export class UpdateUserDto {
     @ApiProperty()
     user_phone: string
 
-    @ApiProperty()
-    psychologist_id?: string;
-
-    @ApiProperty()
-    user_genre?: UserGenderType
-
     @ApiProperty({ required: false })
     user_rg?: string
 
     @ApiProperty({ required: false })
     user_cpf?: string
+
+    @IsOptional()
+    @ValidateNested()
+    @Type(() => CreateAddressDto)
+    address?: CreateAddressDto
 }

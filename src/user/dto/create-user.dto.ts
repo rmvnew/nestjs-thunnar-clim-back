@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, IsOptional, Length, ValidateNested } from 'class-validator';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 import { IsValidPhone } from 'src/common/decorators/IsValidPhone.decorator';
 import { NoSpecialChars } from 'src/common/decorators/NoSpecialChars.decorator';
@@ -32,7 +33,9 @@ export class CreateUserDto {
     user_date_of_birth: string;
 
     @IsOptional()
-    address?: CreateAddressDto;
+    @ValidateNested()
+    @Type(() => CreateAddressDto)
+    address?: CreateAddressDto
 
 
 }

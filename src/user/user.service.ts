@@ -250,6 +250,7 @@ export class UserService {
 
       const user = await this.userRepository.createQueryBuilder('user')
         .leftJoinAndSelect('user.profile', 'profile')
+        .leftJoinAndSelect('user.address', 'address')
         .where('user.user_id = :user_id', { user_id: id })
         .getOne()
 
@@ -297,10 +298,12 @@ export class UserService {
         user_phone,
         user_cpf,
         user_rg,
+        address
       } = updateUserDto
 
 
       const isRegistered = await this.findById(id)
+      const current_address = isRegistered.address
 
 
       if (!isRegistered) {
@@ -321,6 +324,18 @@ export class UserService {
       if (user_email) {
 
         user.user_email = user_email
+
+      }
+
+      if (address) {
+        current_address.address_zipcode = address.address_zipcode
+        current_address.address_city = address.address_city
+        current_address.address_district = address.address_district
+        current_address.address_state = address.address_state
+        current_address.address_street = address.address_street
+        current_address.address_home_number = address.address_home_number
+
+        user.address = current_address
 
       }
 
