@@ -76,6 +76,7 @@ export enum TypeActions {
     SIGNOUT = 'SIGNOUT',
     CREATE = 'CREATE',
     UPDATE = 'UPDATE',
-    CHANGE_STATUS = 'CHANGE_STATUS',
+    ACTIVATED = 'ACTIVATED',
+    DISABLED = 'DISABLED',
     DELETE = 'DELETE'
 }

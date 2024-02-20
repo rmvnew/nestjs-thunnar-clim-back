@@ -5,5 +5,6 @@ export class CreateHistoricDto {
     historic_department: string
     historic_occurrence: string
     user: UserEntity
+    historic_details?: string
 
 }

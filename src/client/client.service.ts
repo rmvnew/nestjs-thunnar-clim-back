@@ -50,17 +50,16 @@ export class ClientService {
 
       client.client_responsible = client_responsible.toUpperCase()
 
-
+      const client_saved = await this.clientRepository.save(client)
 
       this.historicService.historicRegister(
         req,
         TypeDepartments.CLIENT,
-        TypeActions.CREATE
+        TypeActions.CREATE,
+        `Registro manipulado -> id: ${client_saved.client_id} - Nome: ${client_saved.client_name}`
       )
 
-
-      return await this.clientRepository.save(client)
-
+      return client_saved
 
     } catch (error) {
       this.logger.error(`Error create client - ${error.message}`)
@@ -187,13 +186,40 @@ export class ClientService {
       client.client_responsible = client_responsible.toUpperCase()
     }
 
+    const client_saved = await this.clientRepository.save(client)
+
     this.historicService.historicRegister(
       req,
       TypeDepartments.CLIENT,
-      TypeActions.UPDATE
+      TypeActions.UPDATE,
+      `Registro manipulado -> id: ${client_saved.client_id} - Nome: ${client_saved.client_name}`
     )
 
-    return this.clientRepository.save(client)
+    return client_saved
+  }
+
+
+  async changeStatus(id: string, req: RequestWithUser) {
+
+    const is_registered = await this.findById(id)
+
+    if (!is_registered) {
+      throw new NotFoundException(`Cliente não encontrado!`)
+    }
+
+    const { status } = is_registered
+
+    is_registered.status = status ? false : true
+
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.CLIENT,
+      is_registered.status ? TypeActions.ACTIVATED : TypeActions.DISABLED,
+      `Registro manipulado -> id: ${is_registered.client_id} - Nome: ${is_registered.client_name}`
+    )
+
+    this.clientRepository.save(is_registered)
+
   }
 
   //^ feito e testado 
@@ -205,10 +231,12 @@ export class ClientService {
       throw new NotFoundException(`Cliente não encontrado!`)
     }
 
+
     this.historicService.historicRegister(
       req,
       TypeDepartments.CLIENT,
-      TypeActions.DELETE
+      TypeActions.DELETE,
+      `Registro manipulado -> id: ${is_registered.client_id} - Nome: ${is_registered.client_name}`
     )
 
     this.clientRepository.remove(is_registered)

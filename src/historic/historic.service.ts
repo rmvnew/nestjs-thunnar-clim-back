@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TypeActions, TypeDepartments } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments } from 'src/common/Enums';
 import { CustomDate } from 'src/common/custom.date';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
+import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateHistoricDto } from './dto/create-historic.dto';
+import { HistoricFilter } from './dto/historic.filter';
 import { Historic } from './entities/historic.entity';
 
 @Injectable()
 export class HistoricService {
+
+  private readonly logger = new Logger(HistoricService.name)
 
   constructor(
     @InjectRepository(Historic)
@@ -38,7 +42,8 @@ export class HistoricService {
   async historicRegister(
     req: RequestWithUser,
     typeDepartment: TypeDepartments,
-    typeActions: TypeActions
+    typeActions: TypeActions,
+    details?: string
   ) {
 
     const logged_in_user_id = req.user.sub
@@ -48,6 +53,7 @@ export class HistoricService {
     const historic: CreateHistoricDto = {
       historic_department: typeDepartment,
       historic_occurrence: typeActions,
+      historic_details: details,
       user: user
     }
 
@@ -55,8 +61,49 @@ export class HistoricService {
     await this.create(historic)
   }
 
-  findAll() {
-    return this.historicRepository.find()
+  async findAll(filter: HistoricFilter) {
+
+
+    try {
+      const { sort, orderBy, user_name } = filter;
+
+      const queryBuilder = this.historicRepository.createQueryBuilder('hist')
+        .leftJoinAndSelect('hist.user', 'user')
+        .select([
+          'hist.historic_id',
+          'hist.historic_date',
+          'hist.historic_department',
+          'hist.historic_occurrence',
+          'hist.historic_details',
+          'hist.create_at',
+          'hist.update_at',
+          'hist.status',
+        ]).addSelect([
+          'user.user_name'
+        ])
+
+
+
+      if (user_name) {
+        queryBuilder.andWhere(`user.user_name LIKE :user_name`, {
+          user_name: `%${user_name}%`
+        });
+      }
+      if (orderBy == SortingType.DATE) {
+        queryBuilder.orderBy('hist.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+      } else {
+        queryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+      }
+
+
+      return CustomPagination.getInstance().getPage(queryBuilder, filter)
+
+
+    } catch (error) {
+      this.logger.error(`findAll error: ${error.message}`, error.stack)
+      throw error;
+    }
+
   }
 
 

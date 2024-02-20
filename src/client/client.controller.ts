@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
@@ -54,12 +54,21 @@ export class ClientController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Body() updateClientDto: UpdateClientDto
   ) {
     return this.clientService.update(id, updateClientDto, req);
+  }
+
+  @Patch(':id')
+  async changeStatus(
+    @Req() req: RequestWithUser,
+    @Param('id') id: string,
+
+  ) {
+    return this.clientService.changeStatus(id, req);
   }
 
   @Delete(':id')
