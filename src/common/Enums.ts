@@ -69,6 +69,7 @@ export enum TypeDepartments {
     USER = 'USER',
     AUTH = 'AUTH',
     CLIENT = 'CLIENT',
+    PRODUCT = 'PRODUCT'
 }
 
 

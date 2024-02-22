@@ -150,55 +150,64 @@ export class ClientService {
   //^ feito e testado 
   async update(id: string, updateClientDto: UpdateClientDto, req: RequestWithUser) {
 
-    const is_registered = await this.findById(id)
-    const current_address = is_registered.address
+    try {
 
-    if (!is_registered) {
-      throw new NotFoundException(`Cliente não encontrado!`)
+      const is_registered = await this.findById(id)
+      const current_address = is_registered.address
+
+      if (!is_registered) {
+        throw new NotFoundException(`Cliente não encontrado!`)
+      }
+
+      const { client_name, client_is_company, client_cnpj, client_responsible, address } = updateClientDto
+
+      if (client_is_company && !client_cnpj) {
+        throw new BadRequestException(`Para empresa informe o cnpj!`)
+      }
+
+      const client = await this.clientRepository.preload({
+        client_id: id,
+        ...updateClientDto
+      })
+
+      if (address) {
+        current_address.address_zipcode = address.address_zipcode
+        current_address.address_city = address.address_city
+        current_address.address_district = address.address_district
+        current_address.address_state = address.address_state
+        current_address.address_street = address.address_street
+        current_address.address_home_number = address.address_home_number
+        client.address = current_address
+      }
+
+      if (client_name) {
+        client.client_name = client_name.toUpperCase()
+      }
+
+      if (client_responsible) {
+        client.client_responsible = client_responsible.toUpperCase()
+      }
+
+      const client_saved = await this.clientRepository.save(client)
+
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.CLIENT,
+        TypeActions.UPDATE,
+        `Registro manipulado -> id: ${client_saved.client_id} - Nome: ${client_saved.client_name}`
+      )
+
+      return client_saved
+
+    } catch (error) {
+
+      this.logger.error(`Error - update client: ${error.message}`)
+
     }
 
-    const { client_name, client_is_company, client_cnpj, client_responsible, address } = updateClientDto
-
-    if (client_is_company && !client_cnpj) {
-      throw new BadRequestException(`Para empresa informe o cnpj!`)
-    }
-
-    const client = await this.clientRepository.preload({
-      client_id: id,
-      ...updateClientDto
-    })
-
-    if (address) {
-      current_address.address_zipcode = address.address_zipcode
-      current_address.address_city = address.address_city
-      current_address.address_district = address.address_district
-      current_address.address_state = address.address_state
-      current_address.address_street = address.address_street
-      current_address.address_home_number = address.address_home_number
-      client.address = current_address
-    }
-
-    if (client_name) {
-      client.client_name = client_name.toUpperCase()
-    }
-
-    if (client_responsible) {
-      client.client_responsible = client_responsible.toUpperCase()
-    }
-
-    const client_saved = await this.clientRepository.save(client)
-
-    this.historicService.historicRegister(
-      req,
-      TypeDepartments.CLIENT,
-      TypeActions.UPDATE,
-      `Registro manipulado -> id: ${client_saved.client_id} - Nome: ${client_saved.client_name}`
-    )
-
-    return client_saved
   }
 
-
+  //^ feito e testado 
   async changeStatus(id: string, req: RequestWithUser) {
 
     const is_registered = await this.findById(id)
