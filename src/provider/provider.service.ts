@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { HistoricService } from 'src/historic/historic.service';
+import { Repository } from 'typeorm';
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
+import { Provider } from './entities/provider.entity';
 
 @Injectable()
 export class ProviderService {
-  create(createProviderDto: CreateProviderDto) {
+
+  constructor(
+    @InjectRepository(Provider)
+    private readonly providerRepository: Repository<Provider>,
+    private readonly historicService: HistoricService
+  ) { }
+
+  async create(createProviderDto: CreateProviderDto) {
     return 'This action adds a new provider';
   }
 
-  findAll() {
+  async findByNameAndCnpj(name: string, cnpj: string) {
+
+  }
+  async findAll() {
     return `This action returns all provider`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} provider`;
   }
 
-  update(id: number, updateProviderDto: UpdateProviderDto) {
+  async update(id: number, updateProviderDto: UpdateProviderDto) {
     return `This action updates a #${id} provider`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} provider`;
   }
 }
