@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, Length, ValidateNested } from 'class-validator';
+import { IsNotEmpty, Length, ValidateNested } from 'class-validator';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 import { IsValidPhone } from 'src/common/decorators/IsValidPhone.decorator';
 import { NoSpecialChars } from 'src/common/decorators/NoSpecialChars.decorator';
@@ -32,8 +32,9 @@ export class CreateUserDto {
     @ApiProperty()
     user_date_of_birth: string;
 
-    @IsOptional()
+    // @IsOptional()
     @ValidateNested()
+    @ApiPropertyOptional({ type: CreateAddressDto })
     @Type(() => CreateAddressDto)
     address?: CreateAddressDto
 

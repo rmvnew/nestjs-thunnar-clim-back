@@ -13,6 +13,7 @@ import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 import { HistoricModule } from './historic/historic.module';
 import { ProductModule } from './product/product.module';
+import { ProviderModule } from './provider/provider.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProductModule } from './product/product.module';
     ClientModule,
     HistoricModule,
     ProductModule,
+    ProviderModule,
   ],
   controllers: [],
   providers: [
