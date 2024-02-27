@@ -107,12 +107,20 @@ export class ProductService {
         throw new NotFoundException(`Produto não encontrado!`)
       }
 
-      const client = await this.productRepository.preload({
+      const { product_name } = updateProductDto
+
+      const product = await this.productRepository.preload({
         product_id: id,
         ...updateProductDto
       })
 
-      const product_saved = await this.productRepository.save(client)
+      if (product_name) {
+
+        product.product_name = product_name.toUpperCase()
+
+      }
+
+      const product_saved = await this.productRepository.save(product)
 
       this.historicService.historicRegister(
         req,
