@@ -153,11 +153,11 @@ export class ClientService {
     try {
 
       const is_registered = await this.findById(id)
-      const current_address = is_registered.address
 
       if (!is_registered) {
         throw new NotFoundException(`Cliente não encontrado!`)
       }
+      const current_address = is_registered.address
 
       const { client_name, client_is_company, client_cnpj, client_responsible, address } = updateClientDto
 
