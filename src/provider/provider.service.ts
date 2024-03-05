@@ -30,7 +30,8 @@ export class ProviderService {
 
       const is_registered = await this.providerIsRegistered(name, cnpj)
 
-      if (!is_registered) {
+
+      if (is_registered) {
         throw new BadRequestException(`O fornecedor já está cadastrado!\nVerifique o cnpj.`)
       }
 
@@ -49,10 +50,11 @@ export class ProviderService {
         `Registro manipulado -> id: ${saved_provider.provider_id} - Nome: ${saved_provider.provider_name}`
       )
 
-      return 'This action adds a new provider';
+      return saved_provider
 
     } catch (error) {
       this.logger.error(`Error create provider - ${error.message}`)
+      throw error
     }
 
   }
@@ -78,6 +80,8 @@ export class ProviderService {
     } catch (error) {
 
       this.logger.error(`Error create provider - ${error.message}`)
+      throw error
+
     }
 
 
@@ -178,6 +182,7 @@ export class ProviderService {
 
     } catch (error) {
       this.logger.error(`Error update provider - ${error.message}`)
+      throw error
     }
 
   }

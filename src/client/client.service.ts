@@ -202,7 +202,7 @@ export class ClientService {
     } catch (error) {
 
       this.logger.error(`Error - update client: ${error.message}`)
-
+      throw error
     }
 
   }

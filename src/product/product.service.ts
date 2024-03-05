@@ -134,7 +134,7 @@ export class ProductService {
     } catch (error) {
 
       this.logger.error(`Error - update client: ${error.message}`)
-
+      throw error
     }
   }
 
@@ -163,6 +163,7 @@ export class ProductService {
 
     } catch (error) {
       this.logger.error(`Error changeStatus product: ${error.message}`)
+      throw error
     }
   }
 
@@ -187,6 +188,7 @@ export class ProductService {
 
     } catch (error) {
       this.logger.error(`Error delete product: ${error.message}`)
+      throw error
     }
   }
 

@@ -33,6 +33,7 @@ async function bootstrap() {
 
   } catch (error) {
     logger.error('Main error: ', error)
+    throw error
   }
 }
 bootstrap();
