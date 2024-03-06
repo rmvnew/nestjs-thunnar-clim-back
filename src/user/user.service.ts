@@ -6,7 +6,7 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import * as QRCode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
-import { SortingType, TypeActions, TypeDepartments, ValidType } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments, TypeMessage, ValidType } from 'src/common/Enums';
 import { Utils } from 'src/common/Utils';
 import { CustomDate } from 'src/common/custom.date';
 import { CodeRecoverInterface } from 'src/common/interfaces/email.interface';
@@ -248,12 +248,15 @@ export class UserService {
 
     try {
 
-      const user = await this.userRepository.createQueryBuilder('user')
-        .leftJoinAndSelect('user.profile', 'profile')
-        .leftJoinAndSelect('user.address', 'address')
-        .where('user.user_id = :user_id', { user_id: id })
-        .getOne()
+      const user = await this.userRepository.findOne({
+        where: {
+          user_id: id
+        }, relations: ['profile', 'address']
+      })
 
+      if (!user) {
+        throw new NotFoundException(`O usuário ${TypeMessage.NOT_FOUND}`)
+      }
 
       return user
 

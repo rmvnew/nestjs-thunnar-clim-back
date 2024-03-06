@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
@@ -44,7 +44,7 @@ export class ProviderController {
     Tipo: Autenticada. 
     Acesso: [Todos]` })
   @ApiQuery({ name: 'provider_name', required: false, description: '### Este é um filtro opcional!' })
-  async findAll(filter: ProviderFilter) {
+  async findAll(@Query() filter: ProviderFilter) {
     return this.providerService.findAll(filter);
   }
 

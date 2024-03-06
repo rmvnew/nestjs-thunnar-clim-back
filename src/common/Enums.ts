@@ -83,3 +83,8 @@ export enum TypeActions {
     DISABLED = 'DISABLED',
     DELETE = 'DELETE'
 }
+
+
+export enum TypeMessage {
+    NOT_FOUND = 'não foi encontrado!'
+}

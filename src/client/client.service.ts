@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortingType, TypeActions, TypeDepartments } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments, TypeMessage } from 'src/common/Enums';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { HistoricService } from 'src/historic/historic.service';
@@ -129,13 +129,14 @@ export class ClientService {
 
     try {
 
-      const current_client = await this.clientRepository.createQueryBuilder('client')
-        .leftJoinAndSelect('client.address', 'address')
-        .where('client.client_id = :id', { id })
-        .getOne()
+      const current_client = await this.clientRepository.findOne({
+        where: {
+          client_id: id
+        }, relations: ['address']
+      })
 
       if (!current_client) {
-        throw new NotFoundException(`Cliente não encontrado!`)
+        throw new NotFoundException(`O Cliente ${TypeMessage.NOT_FOUND}`)
       }
 
       return current_client
@@ -210,7 +211,11 @@ export class ClientService {
   //^ feito e testado 
   async changeStatus(id: string, req: RequestWithUser) {
 
-    const is_registered = await this.findById(id)
+    const is_registered = await this.clientRepository.findOne({
+      where: {
+        client_id: id
+      }
+    })
 
     if (!is_registered) {
       throw new NotFoundException(`Cliente não encontrado!`)

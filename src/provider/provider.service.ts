@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SortingType, TypeActions, TypeDepartments } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments, TypeMessage } from 'src/common/Enums';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { HistoricService } from 'src/historic/historic.service';
@@ -92,7 +92,8 @@ export class ProviderService {
 
     try {
 
-      const { sort, orderBy, provider_name, showActives } = filter;
+      const { orderBy, provider_name, showActives, sort } = filter;
+
 
       const queryBuilder = this.providerRepository.createQueryBuilder('prov')
         .leftJoinAndSelect('prov.address', 'address')
@@ -125,12 +126,24 @@ export class ProviderService {
 
   // ? feito falta testar
   async findById(id: string) {
-    return this.providerRepository.findOne({
-      where: {
-        provider_id: id,
-        status: Not(false)
+    try {
+      const provider = await this.providerRepository.findOne({
+        where: {
+          provider_id: id,
+          status: Not(false)
+        }
+      })
+
+      if (!provider) {
+        throw new NotFoundException(`O fornecedor ${TypeMessage.NOT_FOUND}`)
       }
-    })
+
+      return provider
+
+    } catch (error) {
+      this.logger.error(`Provider - findById: ${error.message}`)
+      throw error
+    }
   }
 
   // ? feito falta testar
@@ -180,16 +193,25 @@ export class ProviderService {
         `Registro manipulado -> id: ${saved_provider.provider_id} - Nome: ${saved_provider.provider_name}`
       )
 
+
+      return saved_provider
+
     } catch (error) {
       this.logger.error(`Error update provider - ${error.message}`)
       throw error
     }
 
+
+
   }
 
   async changeStatus(id: string, req: RequestWithUser) {
 
-    const is_registered = await this.findById(id)
+    const is_registered = await this.providerRepository.findOne({
+      where: {
+        provider_id: id
+      }
+    })
 
     if (!is_registered) {
       throw new NotFoundException(`Fornecedor não encontrado!`)
@@ -214,19 +236,25 @@ export class ProviderService {
 
   async remove(id: string, req: RequestWithUser) {
 
-    const is_registered = await this.findById(id)
+    const provider = await this.providerRepository.findOne({
+      where: {
+        provider_id: id,
 
-    if (!is_registered) {
+      }, relations: ['address']
+    });
+
+
+    if (!provider) {
       throw new NotFoundException(`Fornecedor não encontrado!`)
     }
 
-    const saved_provider = await this.providerRepository.remove(is_registered)
+    const saved_provider = await this.providerRepository.delete(provider.provider_id)
 
     this.historicService.historicRegister(
       req,
       TypeDepartments.PROVIDER,
       TypeActions.UPDATE,
-      `Registro manipulado -> id: ${saved_provider.provider_id} - Nome: ${saved_provider.provider_name}`
+      `Registro manipulado -> id: ${provider.provider_id} - Nome: ${provider.provider_name}`
     )
 
     return saved_provider
