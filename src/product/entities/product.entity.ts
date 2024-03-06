@@ -7,7 +7,7 @@ export class Product extends EntityBase {
     @PrimaryGeneratedColumn('uuid')
     product_id: string
 
-    @Column()
+    @Column({ unique: true })
     product_name: string
 
     @Column({ nullable: true })
@@ -36,4 +36,7 @@ export class Product extends EntityBase {
 
     @Column({ nullable: true })
     product_unit_price?: number
+
+    @Column({ nullable: false })
+    can_be_returned?: boolean;
 }

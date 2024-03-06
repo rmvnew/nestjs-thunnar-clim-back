@@ -28,12 +28,7 @@ export class ProviderService {
 
       const { provider_name: name, provider_cnpj: cnpj, provider_responsible } = createProviderDto
 
-      const is_registered = await this.providerIsRegistered(name, cnpj)
-
-
-      if (is_registered) {
-        throw new BadRequestException(`O fornecedor já está cadastrado!\nVerifique o cnpj.`)
-      }
+      await this.providerIsRegistered(name.toUpperCase(), cnpj)
 
       const provider = this.providerRepository.create(createProviderDto)
 
@@ -63,10 +58,12 @@ export class ProviderService {
   async providerIsRegistered(name: string, cnpj: string) {
 
     try {
-      const provider = await this.providerRepository
-        .createQueryBuilder("provider")
-        .where("provider.provider_cnpj = :cnpj", { cnpj })
-        .getOne();
+
+      const provider = await this.providerRepository.findOne({
+        where: {
+          provider_cnpj: cnpj
+        }
+      })
 
       if (provider) {
         if (provider.provider_name !== name) {
@@ -76,14 +73,13 @@ export class ProviderService {
         }
       }
 
-      return null;
+
     } catch (error) {
 
       this.logger.error(`Error create provider - ${error.message}`)
       throw error
 
     }
-
 
   }
 

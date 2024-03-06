@@ -24,17 +24,18 @@ export class ProductService {
 
   async create(createProductDto: CreateProductDto, req: RequestWithUser) {
 
-    const { product_name } = createProductDto
+    const { product_name, can_be_returned: returnd, product_barcode: barcode } = createProductDto
 
-    const is_registered = await this.findByNameAndBarcode(product_name.toUpperCase())
+    await this.findByNameAndBarcode(product_name.toUpperCase(), barcode)
 
-    if (is_registered) {
-      throw new BadRequestException(` Produto já cadastrado: ${product_name}`)
-    }
+    const can_be_returnd = returnd === undefined ? false : returnd
+
 
     const product = this.productRepository.create(createProductDto)
 
     product.product_name = product_name.toUpperCase()
+
+    product.can_be_returned = can_be_returnd
 
     const product_saved = await this.productRepository.save(product)
 
@@ -48,12 +49,29 @@ export class ProductService {
     return product_saved
   }
 
-  async findByNameAndBarcode(name: string) {
-    return this.productRepository.findOne({
-      where: {
-        product_name: name
+  async findByNameAndBarcode(name: string, barcode: string) {
+
+    try {
+
+      const product = await this.productRepository.findOne({
+        where: {
+          product_barcode: barcode
+        }
+      })
+
+      if (product) {
+        if (product.product_name !== name) {
+          throw new BadRequestException(`O código de barras já está cadastrado para outro produto!`)
+        } else {
+          throw new BadRequestException(`O produto já está cadastrado!`)
+        }
       }
-    })
+
+    } catch (error) {
+      this.logger.error(`Product - findByNameAndBarcode: ${error.message}`)
+      throw error
+    }
+
   }
 
   async findAll(filter: ProductFilter) {

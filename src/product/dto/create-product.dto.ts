@@ -41,4 +41,7 @@ export class CreateProductDto {
     @ApiProperty()
     @IsNumber()
     product_unit_price?: number
+
+    @ApiProperty()
+    can_be_returned?: boolean;
 }

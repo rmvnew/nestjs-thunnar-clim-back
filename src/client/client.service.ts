@@ -26,19 +26,11 @@ export class ClientService {
   //^ feito e testado
   async create(createClientDto: CreateClientDto, req: RequestWithUser) {
 
-
-
     try {
-
-
 
       const { client_name, client_is_company, client_cnpj, client_responsible } = createClientDto
 
-      const is_exists = await this.findByName(client_name.toUpperCase())
-
-      if (is_exists) {
-        throw new BadRequestException(`O Cliente já está cadastrado!`)
-      }
+      await this.findByNameAndCnpj(client_name.toUpperCase(), client_cnpj)
 
       if (client_is_company && !client_cnpj) {
         throw new BadRequestException(`Para empresa informe o cnpj!`)
@@ -69,15 +61,23 @@ export class ClientService {
   }
 
   //^ feito e testado
-  async findByName(name: string) {
+  async findByNameAndCnpj(name: string, cnpj: string) {
 
     try {
 
-      const current_client = await this.clientRepository.createQueryBuilder('client')
-        .where('client_name = :name', { name })
-        .getOne()
+      const current_client = await this.clientRepository.findOne({
+        where: {
+          client_cnpj: cnpj
+        }
+      })
 
-      return current_client
+      if (current_client) {
+        if (current_client.client_name !== name) {
+          throw new BadRequestException(`O CNPJ: ${cnpj} já está cadastrado para outra empresa.`);
+        } else {
+          throw new BadRequestException(`O Cliente já está cadastrado!!`)
+        }
+      }
 
     } catch (error) {
       this.logger.error(`Client - findByName: ${error.message}`);

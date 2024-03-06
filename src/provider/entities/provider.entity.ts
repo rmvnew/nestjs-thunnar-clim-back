@@ -8,7 +8,7 @@ export class Provider extends EntityBase {
     @PrimaryGeneratedColumn('uuid')
     provider_id: string
 
-    @Column()
+    @Column({ unique: true })
     provider_name: string
 
     @Column()
