@@ -115,7 +115,7 @@ export class UserController {
 
   //^ GET USER BY EMAIL
   @Get('/userEmail')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota busca um usuário pelo email.
     Tipo: Autenticada. 
@@ -130,7 +130,7 @@ export class UserController {
 
   //^ GET LOGGED USER
   @Get('me')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota obtém o usuário logado.
     Tipo: Autenticada. 
@@ -162,7 +162,7 @@ export class UserController {
 
   //^ GER 2FA QRCODE
   @Get('/qrcode-2fa/:id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota obtém os dados para gerar o qr-code.
     Descrição: Este qr-code é usado para configurar o aplicativo que gera token.
@@ -178,7 +178,7 @@ export class UserController {
 
   //^ ENABLE OR DISABLE 2FA
   @Put('status-code/:id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota habilita e desabilita a autenticação de dois fatores.
     Tipo: Autenticada. 
@@ -199,7 +199,7 @@ export class UserController {
 
   //^ FIND BY ID
   @Get(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota busca um usuário pelo Id.
     Tipo: Autenticada. 

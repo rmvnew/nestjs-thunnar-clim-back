@@ -70,7 +70,8 @@ export enum TypeDepartments {
     AUTH = 'AUTH',
     CLIENT = 'CLIENT',
     PRODUCT = 'PRODUCT',
-    PROVIDER = 'PROVIDER'
+    PROVIDER = 'PROVIDER',
+    MOVIMENT = 'MOVIMENT'
 }
 
 
@@ -87,4 +88,12 @@ export enum TypeActions {
 
 export enum TypeMessage {
     NOT_FOUND = 'não foi encontrado!'
+}
+
+export enum TypeCondition {
+    OPEN = 'OPEN',
+    IN_PROGRESS = 'IN_PROGRESS',
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
+    CANCELED = 'CANCELED',
 }

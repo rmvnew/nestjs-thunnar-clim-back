@@ -17,7 +17,7 @@ export class ProviderController {
   constructor(private readonly providerService: ProviderService) { }
 
   @Post()
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota adiciona um novo produto.
     Tipo: Autenticada. 
@@ -38,7 +38,7 @@ export class ProviderController {
   }
 
   @Get()
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota busca todos fornecedores.
     Tipo: Autenticada. 
@@ -49,7 +49,7 @@ export class ProviderController {
   }
 
   @Get(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota busca um fornecedor pelo Id.
     Tipo: Autenticada. 
@@ -60,7 +60,7 @@ export class ProviderController {
   }
 
   @Put(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota atualiza um fornecedor pelo Id.
     Tipo: Autenticada. 
@@ -79,7 +79,7 @@ export class ProviderController {
   }
 
   @Patch(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota habilita e desabilita um fornecedor pelo Id.
     Tipo: Autenticada. 
@@ -94,7 +94,7 @@ export class ProviderController {
   }
 
   @Delete(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota Deleta um fornecedor pelo Id.
     Tipo: Autenticada. 

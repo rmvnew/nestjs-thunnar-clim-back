@@ -1,6 +1,7 @@
 import { Address } from "src/address/entities/address.entity";
 import { EntityBase } from "src/common/common_class/entity_base";
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Moviment } from "src/moviment/entities/moviment.entity";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_CLIENT')
 export class Client extends EntityBase {
@@ -32,6 +33,9 @@ export class Client extends EntityBase {
     @OneToOne(() => Address, { nullable: true, cascade: true, eager: true })
     @JoinColumn({ name: 'address_id' })
     address?: Address
+
+    @OneToMany(() => Moviment, moviment => moviment.user)
+    moviments: Moviment[];
 
 
 }

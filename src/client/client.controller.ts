@@ -49,7 +49,7 @@ export class ClientController {
   }
 
   @Get(':id')
-  @UseGuards(PermissionGuard(AccessProfile.ADMIN_USER_MANAGER_OWNER))
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
     description: `# Esta rota busca um Cliente pelo Id.
     Tipo: Autenticada. 

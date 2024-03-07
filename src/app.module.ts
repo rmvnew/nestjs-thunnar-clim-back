@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
 import { HistoricModule } from './historic/historic.module';
 import { ProductModule } from './product/product.module';
 import { ProviderModule } from './provider/provider.module';
+import { MovimentModule } from './moviment/moviment.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ProviderModule } from './provider/provider.module';
     HistoricModule,
     ProductModule,
     ProviderModule,
+    MovimentModule,
   ],
   controllers: [],
   providers: [
