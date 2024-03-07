@@ -8,13 +8,14 @@ import { Bootstrap } from './config/bootstrap';
 import { DatabaseModule } from './config/database/database.module';
 import { ConfigModule } from './config/environments/config.module';
 import { SwaggerModule } from './config/swagger/swagger.module';
-import { EmailModule } from './mail/mail.module';
-import { ProfileModule } from './profile/profile.module';
-import { UserModule } from './user/user.module';
 import { HistoricModule } from './historic/historic.module';
+import { EmailModule } from './mail/mail.module';
+import { MovementItemsModule } from './movement_items/movement_items.module';
+import { MovementModule } from './moviment/movement.module';
 import { ProductModule } from './product/product.module';
+import { ProfileModule } from './profile/profile.module';
 import { ProviderModule } from './provider/provider.module';
-import { MovimentModule } from './moviment/moviment.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { MovimentModule } from './moviment/moviment.module';
     HistoricModule,
     ProductModule,
     ProviderModule,
-    MovimentModule,
+    MovementModule,
+    MovementItemsModule,
   ],
   controllers: [],
   providers: [

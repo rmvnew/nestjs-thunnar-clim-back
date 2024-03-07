@@ -3,7 +3,7 @@ import { IsEnum, IsOptional } from "class-validator"
 import { TypeCondition } from "src/common/Enums"
 
 
-export class CreateMovimentDto {
+export class CreateMovementDto {
 
     @ApiProperty()
     user_id: string
@@ -14,6 +14,6 @@ export class CreateMovimentDto {
     @ApiProperty({ required: false, enum: TypeCondition })
     @IsOptional()
     @IsEnum(TypeCondition)
-    moviment_condition?: string
+    movement_condition?: string
 
 }

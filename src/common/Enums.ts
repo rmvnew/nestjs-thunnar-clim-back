@@ -71,7 +71,7 @@ export enum TypeDepartments {
     CLIENT = 'CLIENT',
     PRODUCT = 'PRODUCT',
     PROVIDER = 'PROVIDER',
-    MOVIMENT = 'MOVIMENT'
+    MOVEMENT = 'MOVEMENT'
 }
 
 

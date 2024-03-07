@@ -5,21 +5,21 @@ import { UserEntity } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
-@Entity('tb_moviment')
-export class Moviment extends EntityBase {
+@Entity('tb_movement')
+export class Movement extends EntityBase {
 
     @PrimaryGeneratedColumn('uuid')
-    moviment_id: string
+    movement_id: string
 
     @Column({ type: 'enum', enum: TypeCondition, default: TypeCondition.OPEN })
-    moviment_condition: string
+    movement_condition: string
 
-    @ManyToOne(() => UserEntity, (user) => user.moviments)
-    @JoinColumn({ name: 'moviment_user_id' })
+    @ManyToOne(() => UserEntity, (user) => user.movements)
+    @JoinColumn({ name: 'movement_user_id' })
     user: UserEntity
 
-    @ManyToOne(() => Client, (client) => client.moviments)
-    @JoinColumn({ name: 'moviment_client_id' })
+    @ManyToOne(() => Client, (client) => client.movements)
+    @JoinColumn({ name: 'movement_client_id' })
     client: Client
 
 }

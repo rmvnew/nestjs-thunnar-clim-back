@@ -1,7 +1,7 @@
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
 import { Historic } from 'src/historic/entities/historic.entity';
-import { Moviment } from 'src/moviment/entities/moviment.entity';
+import { Movement } from 'src/moviment/entities/movement.entity';
 import { ProfileEntity } from "src/profile/entities/profile.entity";
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -79,8 +79,8 @@ export class UserEntity {
     @OneToMany(() => Historic, historic => historic.user)
     historics: Historic[];
 
-    @OneToMany(() => Moviment, moviment => moviment.user)
-    moviments: Moviment[];
+    @OneToMany(() => Movement, movement => movement.user)
+    movements: Movement[];
 
     setTwoFactorSecret() {
         this.user_2fa_secret = speakeasy.generateSecret({ length: 20 }).base32

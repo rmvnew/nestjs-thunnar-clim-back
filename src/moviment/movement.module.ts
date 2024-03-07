@@ -3,18 +3,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientModule } from 'src/client/client.module';
 import { HistoricModule } from 'src/historic/historic.module';
 import { UserModule } from 'src/user/user.module';
-import { Moviment } from './entities/moviment.entity';
-import { MovimentController } from './moviment.controller';
-import { MovimentService } from './moviment.service';
+import { Movement } from './entities/movement.entity';
+import { MovementController } from './movement.controller';
+import { MovementService } from './movement.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Moviment]),
+    TypeOrmModule.forFeature([Movement]),
     HistoricModule,
     UserModule,
     ClientModule
   ],
-  controllers: [MovimentController],
-  providers: [MovimentService]
+  controllers: [MovementController],
+  providers: [MovementService]
 })
-export class MovimentModule { }
+export class MovementModule { }

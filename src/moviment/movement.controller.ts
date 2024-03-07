@@ -3,76 +3,77 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
-import { CreateMovimentDto } from './dto/create-moviment.dto';
-import { UpdateMovimentDto } from './dto/update-moviment.dto';
-import { MovimentService } from './moviment.service';
+import { CreateMovementDto } from './dto/create-movement.dto';
+import { UpdateMovementDto } from './dto/update-movement.dto';
+import { MovementService } from './movement.service';
 
-@Controller('moviment')
-@ApiTags('Moviment')
+
+@Controller('movement')
+@ApiTags('Movement')
 @ApiBearerAuth()
 
-export class MovimentController {
-  constructor(private readonly movimentService: MovimentService) { }
+export class MovementController {
+  constructor(private readonly movementService: MovementService) { }
 
   @Post()
   @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
-    description: `# Esta rota adiciona uma nova movimentação de materiais/produtos.
+    description: `# Esta rota adiciona uma nova movementação de materiais/produtos.
     Tipo: Autenticada. 
     Acesso: [Todos]` })
 
   @ApiBody({
-    description: '## Schema padrão para criar movimentação.',
-    type: CreateMovimentDto
+    description: '## Schema padrão para criar movementação.',
+    type: CreateMovementDto
   })
   async create(
     @Req() req: RequestWithUser,
-    @Body() createMovimentDto: CreateMovimentDto
+    @Body() createMovementDto: CreateMovementDto
   ) {
-    return this.movimentService.create(createMovimentDto, req);
+    return this.movementService.create(createMovementDto, req);
   }
 
   @Get()
   @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
-    description: `# Esta rota busca todos movimentos.
+    description: `# Esta rota busca todos movementos.
     Tipo: Autenticada. 
     Acesso: [Todos]` })
   // @ApiQuery({ name: 'client_name', required: false, description: '### Este é um filtro opcional!' })
   async findAll() {
-    return this.movimentService.findAll();
+    return this.movementService.findAll();
   }
 
   @Get(':id')
   @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
-    description: `# Esta rota busca um movimento pelo Id.
+    description: `# Esta rota busca um movemento pelo Id.
     Tipo: Autenticada. 
     Acesso: [Todos]` })
-  @ApiParam({ name: 'id', description: 'Id do movimento. ' })
+  @ApiParam({ name: 'id', description: 'Id do movemento. ' })
   async findOne(
     @Param('id') id: string
   ) {
-    return this.movimentService.findById(id);
+    return this.movementService.findById(id);
   }
 
   @Put(':id')
   @UseGuards(PermissionGuard(AccessProfile.ALL))
   @ApiOperation({
-    description: `# Esta rota atualiza um movimento pelo Id.
+    description: `# Esta rota atualiza um movemento pelo Id.
     Tipo: Autenticada. 
     Acesso: [Todos]` })
-  @ApiParam({ name: 'id', description: 'Id do movimento. ' })
+  @ApiParam({ name: 'id', description: 'Id do movemento. ' })
   @ApiBody({
-    description: '## Schema padrão para atualizar um movimento. ',
-    type: UpdateMovimentDto
+    description: '## Schema padrão para atualizar um movemento. ',
+    type: UpdateMovementDto
   })
   async update(
     @Req() req: RequestWithUser,
     @Param('id') id: string,
-    @Body() updateMovimentDto: UpdateMovimentDto
+    @Body() updateMovementDto: UpdateMovementDto
   ) {
-    return this.movimentService.update(id, updateMovimentDto, req);
+    return this.movementService.update(id, updateMovementDto, req);
   }
 
 
