@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CreateMovementDto } from './dto/create-movement.dto';
+import { MovementFilter } from './dto/movement.filter';
 import { UpdateMovementDto } from './dto/update-movement.dto';
 import { MovementService } from './movement.service';
 
@@ -39,9 +40,12 @@ export class MovementController {
     description: `# Esta rota busca todos movementos.
     Tipo: Autenticada. 
     Acesso: [Todos]` })
-  // @ApiQuery({ name: 'client_name', required: false, description: '### Este é um filtro opcional!' })
-  async findAll() {
-    return this.movementService.findAll();
+  @ApiQuery({ name: 'movement_condition', required: false, description: '### Este é um filtro opcional!' })
+  async findAll(
+    @Query() filter: MovementFilter
+  ) {
+
+    return this.movementService.findAll(filter);
   }
 
   @Get(':id')

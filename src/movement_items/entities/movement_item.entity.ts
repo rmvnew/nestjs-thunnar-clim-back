@@ -1,4 +1,3 @@
-import { TypeOperation } from "src/common/Enums";
 import { EntityBase } from "src/common/common_class/entity_base";
 import { Movement } from "src/moviment/entities/movement.entity";
 import { Product } from "src/product/entities/product.entity";
@@ -15,9 +14,6 @@ export class MovementItem extends EntityBase {
 
     @Column()
     movement_items_quantity_returned: number
-
-    @Column({ type: 'enum', enum: TypeOperation, default: TypeOperation.OUTPUT })
-    movement_items_condition: string
 
     @ManyToOne(() => Movement, movement => movement.items)
     @JoinColumn({ name: 'movement_items_moviment_id' })

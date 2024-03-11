@@ -19,23 +19,23 @@ export class MovementItemsService {
     private readonly movementService: MovementService
   ) { }
 
-  create(createMovementItemDto: CreateMovementItemDto) {
+  async create(createMovementItemDto: CreateMovementItemDto) {
     return 'This action adds a new movementItem';
   }
 
-  findAll() {
+  async findAll() {
     return `This action returns all movementItems`;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} movementItem`;
   }
 
-  update(id: number, updateMovementItemDto: UpdateMovementItemDto) {
+  async update(id: number, updateMovementItemDto: UpdateMovementItemDto) {
     return `This action updates a #${id} movementItem`;
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} movementItem`;
   }
 }
