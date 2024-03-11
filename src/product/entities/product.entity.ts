@@ -1,5 +1,6 @@
 import { EntityBase } from "src/common/common_class/entity_base";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { MovementItem } from "src/movement_items/entities/movement_item.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_PRODUCT')
 export class Product extends EntityBase {
@@ -39,4 +40,7 @@ export class Product extends EntityBase {
 
     @Column({ nullable: false })
     can_be_returned?: boolean;
+
+    @OneToMany(() => MovementItem, movement_items => movement_items.product)
+    items: MovementItem[];
 }

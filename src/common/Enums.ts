@@ -71,7 +71,8 @@ export enum TypeDepartments {
     CLIENT = 'CLIENT',
     PRODUCT = 'PRODUCT',
     PROVIDER = 'PROVIDER',
-    MOVEMENT = 'MOVEMENT'
+    MOVEMENT = 'MOVEMENT',
+    MOVEMENT_ITENS = 'MOVEMENT_ITENS'
 }
 
 
@@ -82,7 +83,14 @@ export enum TypeActions {
     UPDATE = 'UPDATE',
     ACTIVATED = 'ACTIVATED',
     DISABLED = 'DISABLED',
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
+    INPUT = 'INPUT',
+    OUTPUT = 'OUTPUT'
+}
+
+export enum TypeOperation {
+    INPUT = 'INPUT',
+    OUTPUT = 'OUTPUT'
 }
 
 

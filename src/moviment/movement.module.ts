@@ -15,6 +15,7 @@ import { MovementService } from './movement.service';
     ClientModule
   ],
   controllers: [MovementController],
-  providers: [MovementService]
+  providers: [MovementService],
+  exports: [MovementService]
 })
 export class MovementModule { }
