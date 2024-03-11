@@ -118,11 +118,28 @@ export class MovementService {
   async findById(id: string) {
     try {
 
-      const movement = await this.movementRepository.findOne({
-        where: {
-          movement_id: id
-        }, relations: ['user', 'client']
-      })
+      const movement = this.movementRepository.createQueryBuilder('mov')
+        .leftJoinAndSelect('mov.user', 'user')
+        .leftJoinAndSelect('user.profile', 'profile')
+        .leftJoinAndSelect('mov.client', 'client')
+        .select([
+          'mov.movement_id',
+          'mov.movement_condition',
+          'mov.status',
+          'mov.create_at',
+          'mov.update_at',
+          'user.user_id',
+          'user.user_name',
+          'user.status',
+          'profile.profile_name',
+          'client.client_id',
+          'client.client_name',
+          'client.client_cnpj',
+          'client.client_cpf',
+          'client.client_phone',
+          'client.status',
+
+        ]).getOne()
 
       if (!movement) {
         throw new NotFoundException(`O movemento ${TypeMessage.NOT_FOUND}`)
