@@ -11,6 +11,7 @@ import { ProductService } from './product.service';
     HistoricModule
   ],
   controllers: [ProductController],
-  providers: [ProductService]
+  providers: [ProductService],
+  exports: [ProductService]
 })
 export class ProductModule { }

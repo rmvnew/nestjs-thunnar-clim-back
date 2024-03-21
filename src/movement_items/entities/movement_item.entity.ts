@@ -12,7 +12,7 @@ export class MovementItem extends EntityBase {
     @Column()
     movement_items_quantity: number
 
-    @Column()
+    @Column({ default: 0 })
     movement_items_quantity_returned: number
 
     @ManyToOne(() => Movement, movement => movement.items)

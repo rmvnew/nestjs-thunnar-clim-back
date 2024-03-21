@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { IsOptional } from "class-validator";
 
 
 export class CreateMovementItemDto {
@@ -7,7 +8,8 @@ export class CreateMovementItemDto {
     movement_items_quantity: number
 
     @ApiProperty()
-    movement_items_quantity_returned: number
+    @IsOptional()
+    movement_items_quantity_returned?: number
 
     @ApiProperty()
     movement_id: string
