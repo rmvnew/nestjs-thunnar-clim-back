@@ -16,6 +16,8 @@ import { ProductModule } from './product/product.module';
 import { ProfileModule } from './profile/profile.module';
 import { ProviderModule } from './provider/provider.module';
 import { UserModule } from './user/user.module';
+import { WorkOrderModule } from './work-order/work-order.module';
+import { DeviceModule } from './device/device.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { UserModule } from './user/user.module';
     ProviderModule,
     MovementModule,
     MovementItemsModule,
+    WorkOrderModule,
+    DeviceModule,
   ],
   controllers: [],
   providers: [

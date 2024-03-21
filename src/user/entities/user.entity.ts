@@ -3,6 +3,7 @@ import { Address } from 'src/address/entities/address.entity';
 import { Historic } from 'src/historic/entities/historic.entity';
 import { Movement } from 'src/moviment/entities/movement.entity';
 import { ProfileEntity } from "src/profile/entities/profile.entity";
+import { WorkOrder } from 'src/work-order/entities/work-order.entity';
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('TB_USER')
@@ -81,6 +82,9 @@ export class UserEntity {
 
     @OneToMany(() => Movement, movement => movement.user)
     movements: Movement[];
+
+    @OneToMany(() => WorkOrder, workOrder => workOrder.user)
+    work_orders: WorkOrder[];
 
     setTwoFactorSecret() {
         this.user_2fa_secret = speakeasy.generateSecret({ length: 20 }).base32

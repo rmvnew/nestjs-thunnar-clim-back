@@ -1,6 +1,7 @@
 import { Address } from "src/address/entities/address.entity";
 import { EntityBase } from "src/common/common_class/entity_base";
 import { Movement } from "src/moviment/entities/movement.entity";
+import { WorkOrder } from "src/work-order/entities/work-order.entity";
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_CLIENT')
@@ -36,6 +37,9 @@ export class Client extends EntityBase {
 
     @OneToMany(() => Movement, movement => movement.user)
     movements: Movement[];
+
+    @OneToMany(() => WorkOrder, workOrder => workOrder.client)
+    work_orders: WorkOrder[];
 
 
 }
