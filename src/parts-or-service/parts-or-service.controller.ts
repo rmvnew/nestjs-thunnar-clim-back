@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PartsOrServiceService } from './parts-or-service.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreatePartsOrServiceDto } from './dto/create-parts-or-service.dto';
 import { UpdatePartsOrServiceDto } from './dto/update-parts-or-service.dto';
+import { PartsOrServiceService } from './parts-or-service.service';
 
 @Controller('parts-or-service')
 export class PartsOrServiceController {
-  constructor(private readonly partsOrServiceService: PartsOrServiceService) {}
+  constructor(private readonly partsOrServiceService: PartsOrServiceService) { }
 
   @Post()
   create(@Body() createPartsOrServiceDto: CreatePartsOrServiceDto) {
@@ -19,7 +19,7 @@ export class PartsOrServiceController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.partsOrServiceService.findOne(+id);
+    return this.partsOrServiceService.findById(+id);
   }
 
   @Patch(':id')
