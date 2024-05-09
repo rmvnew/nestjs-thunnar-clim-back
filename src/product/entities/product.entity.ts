@@ -1,5 +1,6 @@
 import { EntityBase } from "src/common/common_class/entity_base";
 import { MovementItem } from "src/movement_items/entities/movement_item.entity";
+import { PartsOrService } from "src/parts-or-service/entities/parts-or-service.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_PRODUCT')
@@ -39,8 +40,11 @@ export class Product extends EntityBase {
     product_unit_price?: number
 
     @Column({ nullable: false })
-    can_be_returned?: boolean;
+    product_can_be_returned?: boolean;
 
     @OneToMany(() => MovementItem, movement_items => movement_items.product)
     items: MovementItem[];
+
+    @OneToMany(() => PartsOrService, partsOrService => partsOrService.product)
+    parts_or_services: PartsOrService[]
 }

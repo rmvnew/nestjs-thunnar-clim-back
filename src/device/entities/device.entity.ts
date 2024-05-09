@@ -1,5 +1,6 @@
+import { PartsOrService } from "src/parts-or-service/entities/parts-or-service.entity";
 import { WorkOrder } from "src/work-order/entities/work-order.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_DEVICE')
 export class Device {
@@ -37,6 +38,10 @@ export class Device {
     @ManyToOne(() => WorkOrder, workOrder => workOrder.devices)
     @JoinColumn({ name: 'device_work_order_id' })
     workOrder: WorkOrder
+
+    @OneToMany(() => PartsOrService, partsOrService => partsOrService.device)
+    parts_or_services: PartsOrService[];
+
 
 
 }

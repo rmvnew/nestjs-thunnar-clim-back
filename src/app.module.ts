@@ -18,6 +18,7 @@ import { ProviderModule } from './provider/provider.module';
 import { UserModule } from './user/user.module';
 import { WorkOrderModule } from './work-order/work-order.module';
 import { DeviceModule } from './device/device.module';
+import { PartsOrServiceModule } from './parts-or-service/parts-or-service.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { DeviceModule } from './device/device.module';
     MovementItemsModule,
     WorkOrderModule,
     DeviceModule,
+    PartsOrServiceModule,
   ],
   controllers: [],
   providers: [

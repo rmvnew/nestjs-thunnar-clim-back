@@ -35,7 +35,7 @@ export class ProductService {
 
     product.product_name = product_name.toUpperCase()
 
-    product.can_be_returned = can_be_returnd
+    product.product_can_be_returned = can_be_returnd
 
     const product_saved = await this.productRepository.save(product)
 
