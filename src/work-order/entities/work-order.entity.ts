@@ -31,11 +31,11 @@ export class WorkOrder {
     work_order_responsible: string
 
     @ManyToOne(() => UserEntity, (user) => user.work_orders)
-    @JoinColumn({ name: 'movement_user_id' })
+    @JoinColumn({ name: 'user_id' })
     user: UserEntity
 
     @ManyToOne(() => Client, (client) => client.work_orders)
-    @JoinColumn({ name: 'movement_client_id' })
+    @JoinColumn({ name: 'client_id' })
     client: Client
 
     @OneToMany(() => Device, device => device.workOrder)

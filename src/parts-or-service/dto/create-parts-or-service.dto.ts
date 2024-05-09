@@ -14,9 +14,9 @@ export class CreatePartsOrServiceDto {
     parts_or_service_quantity: number
 
     @ApiProperty()
-    product_id: number
+    product_id: string
 
     @ApiProperty()
-    device_id: number
+    device_id: string
 
 }
