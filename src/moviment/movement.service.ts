@@ -73,8 +73,8 @@ export class MovementService {
           'mov.movement_id',
           'mov.movement_condition',
           'mov.status',
-          'mov.create_at',
-          'mov.update_at',
+          'mov.created_at',
+          'mov.updated_at',
           'user.user_id',
           'user.user_name',
           'user.status',
@@ -101,7 +101,7 @@ export class MovementService {
       }
 
       if (orderBy == SortingType.DATE) {
-        queryBuilder.orderBy('mov.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        queryBuilder.orderBy('mov.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         queryBuilder.orderBy('mov.update_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

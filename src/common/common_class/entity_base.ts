@@ -6,10 +6,10 @@ export abstract class EntityBase {
     @Column({ name: 'status', default: true })
     status: boolean;
 
-    @CreateDateColumn()
-    create_at: Date
+    @CreateDateColumn({ type: 'datetime' })
+    created_at: string
 
-    @UpdateDateColumn()
-    update_at: Date
+    @UpdateDateColumn({ type: 'datetime' })
+    updated_at: string
 
 }
