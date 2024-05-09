@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
@@ -25,7 +25,7 @@ export class WorkOrderController {
     description: '## Schema padrão para criar uma nova ordem.',
     type: CreateWorkOrderDto
   })
-  create(@Body() createWorkOrderDto: CreateWorkOrderDto) {
+  async create(@Body() createWorkOrderDto: CreateWorkOrderDto) {
     return this.workOrderService.create(createWorkOrderDto);
   }
 
@@ -36,15 +36,22 @@ export class WorkOrderController {
     Tipo: Autenticada. 
     Acesso: [Todos]` })
   @ApiQuery({ name: 'work_order_responsible', required: false, description: '### Este é um filtro opcional!' })
-  findAll(
+  async findAll(
     @Query() filter: FilterWorkOrder
   ) {
     return this.workOrderService.findAll(filter);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workOrderService.findById(+id);
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
+  @ApiOperation({
+    summary: 'Buscar Ordem pelo id',
+    description: `# Esta rota busca um ordens de serviço pelo Id.
+    Tipo: Autenticada. 
+    Acesso: [Todos]` })
+  @ApiParam({ name: 'id', description: 'Id da ordem. ' })
+  async findOne(@Param('id') id: string) {
+    return this.workOrderService.findById(id);
   }
 
   @Patch(':id')

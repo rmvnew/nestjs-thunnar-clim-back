@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
 import { CustomDate } from 'src/common/custom.date';
@@ -65,6 +65,7 @@ export class WorkOrderService {
       const { sort, orderBy, work_order_responsible: responsible, showActives } = filter;
 
       const queryBuilder = this.woRepository.createQueryBuilder('wo')
+        .leftJoinAndSelect('wo.devices', 'devices')
         .leftJoinAndSelect('wo.client', 'client')
         .leftJoinAndSelect('wo.user', 'user')
         .select([
@@ -76,10 +77,12 @@ export class WorkOrderService {
           'wo.work_order_responsible',
           'wo.created_at',
           'wo.updated_at',
+          'client.client_id',
           'client.client_name',
           'client.client_phone',
+          'user.user_id',
           'user.user_name'
-        ])
+        ]).addSelect('devices')
 
 
       if (showActives === "true") {
@@ -107,8 +110,42 @@ export class WorkOrderService {
     }
   }
 
-  async findById(id: number) {
-    return `This action returns a #${id} workOrder`;
+  async findById(id: string) {
+    try {
+
+      const res = await this.woRepository.createQueryBuilder("work_order")
+        .leftJoinAndSelect("work_order.client", "client")
+        .leftJoinAndSelect("work_order.user", "user")
+        .select([
+          "work_order.work_order_id",
+          "work_order.work_order_number",
+          "work_order.work_order_value",
+          "work_order.work_order_initial_date",
+          "work_order.work_order_initial_expected_date",
+          "work_order.work_order_initial_end_date",
+          "work_order.work_order_responsible",
+          "work_order.created_at",
+          "work_order.updated_at",
+          "client.client_id",
+          "client.client_name",
+          "client.client_phone",
+          "user.user_id",
+          "user.user_name"
+        ])
+        .where("work_order.work_order_id = :id", { id })
+        .getOne();
+
+
+      if (!res) {
+        throw new NotFoundException(`A ordem não foi encontrada!`)
+      }
+
+      return res
+
+    } catch (error) {
+      this.logger.error(`findById error: ${error.message}`, error.stack)
+      throw error
+    }
   }
 
   async update(id: number, updateWorkOrderDto: UpdateWorkOrderDto) {
