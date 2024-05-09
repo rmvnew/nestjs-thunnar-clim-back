@@ -141,8 +141,8 @@ export class UserService {
           'user.user_phone',
           'user.user_enrollment',
           'user.status',
-          'user.create_at',
-          'user.update_at',
+          'user.created_at',
+          'user.updated_at',
 
         ])
         .addSelect([
@@ -172,7 +172,7 @@ export class UserService {
         });
       }
       if (orderBy == SortingType.DATE) {
-        userQueryBuilder.orderBy('user.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        userQueryBuilder.orderBy('user.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         userQueryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

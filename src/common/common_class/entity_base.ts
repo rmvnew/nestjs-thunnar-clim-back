@@ -7,9 +7,9 @@ export abstract class EntityBase {
     status: boolean;
 
     @CreateDateColumn({ type: 'datetime' })
-    create_at: string
+    created_at: string
 
     @UpdateDateColumn({ type: 'datetime' })
-    update_at: string
+    updated_at: string
 
 }

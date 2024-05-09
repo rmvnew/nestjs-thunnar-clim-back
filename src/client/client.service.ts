@@ -108,7 +108,7 @@ export class ClientService {
         });
       }
       if (orderBy == SortingType.DATE) {
-        queryBuilder.orderBy('client.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        queryBuilder.orderBy('client.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         queryBuilder.orderBy('client.client_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

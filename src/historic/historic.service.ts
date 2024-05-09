@@ -79,8 +79,8 @@ export class HistoricService {
           'hist.historic_department',
           'hist.historic_occurrence',
           'hist.historic_details',
-          'hist.create_at',
-          'hist.update_at',
+          'hist.created_at',
+          'hist.updated_at',
           'hist.status',
         ]).addSelect([
           'user.user_id',
@@ -95,7 +95,7 @@ export class HistoricService {
         });
       }
       if (orderBy == SortingType.DATE) {
-        queryBuilder.orderBy('hist.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        queryBuilder.orderBy('hist.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         queryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

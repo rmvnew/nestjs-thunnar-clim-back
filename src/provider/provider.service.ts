@@ -106,7 +106,7 @@ export class ProviderService {
         });
       }
       if (orderBy == SortingType.DATE) {
-        queryBuilder.orderBy('prov.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        queryBuilder.orderBy('prov.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         queryBuilder.orderBy('prov.provider_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

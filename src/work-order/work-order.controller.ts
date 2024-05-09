@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
 import { UpdateWorkOrderDto } from './dto/update-work-order.dto';
+import { FilterWorkOrder } from './dto/workOrder.filter';
 import { WorkOrderService } from './work-order.service';
 
 @Controller('work-order')
@@ -29,8 +30,16 @@ export class WorkOrderController {
   }
 
   @Get()
-  findAll() {
-    return this.workOrderService.findAll();
+  @UseGuards(PermissionGuard(AccessProfile.ALL))
+  @ApiOperation({
+    description: `# Esta rota busca todas Ordens de serviço.
+    Tipo: Autenticada. 
+    Acesso: [Todos]` })
+  @ApiQuery({ name: 'work_order_responsible', required: false, description: '### Este é um filtro opcional!' })
+  findAll(
+    @Query() filter: FilterWorkOrder
+  ) {
+    return this.workOrderService.findAll(filter);
   }
 
   @Get(':id')

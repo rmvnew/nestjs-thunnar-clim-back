@@ -93,7 +93,7 @@ export class ProductService {
         });
       }
       if (orderBy == SortingType.DATE) {
-        queryBuilder.orderBy('prod.create_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+        queryBuilder.orderBy('prod.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
         queryBuilder.orderBy('prod.product_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }

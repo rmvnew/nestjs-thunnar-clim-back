@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
 import { CustomDate } from 'src/common/custom.date';
+import { SortingType } from 'src/common/Enums';
+import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
 import { UpdateWorkOrderDto } from './dto/update-work-order.dto';
+import { FilterWorkOrder } from './dto/workOrder.filter';
 import { WorkOrder } from './entities/work-order.entity';
 
 @Injectable()
 export class WorkOrderService {
+
+  private readonly logger = new Logger(WorkOrderService.name)
 
   constructor(
     @InjectRepository(WorkOrder)
@@ -49,14 +54,57 @@ export class WorkOrderService {
     work_order.work_order_initial_date = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
     work_order.work_order_initial_expected_date = CustomDate.getInstance().getFinalDateorder().sql_date
     work_order.status = true
-    work_order.create_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
-    work_order.update_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
+    work_order.created_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
+    work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
 
     return this.woRepository.save(work_order)
   }
 
-  async findAll() {
-    return `This action returns all workOrder`;
+  async findAll(filter: FilterWorkOrder) {
+    try {
+      const { sort, orderBy, work_order_responsible: responsible, showActives } = filter;
+
+      const queryBuilder = this.woRepository.createQueryBuilder('wo')
+        .leftJoinAndSelect('wo.client', 'client')
+        .leftJoinAndSelect('wo.user', 'user')
+        .select([
+          'wo.work_order_id',
+          'wo.work_order_number',
+          'wo.work_order_value',
+          'wo.work_order_initial_date',
+          'wo.work_order_initial_expected_date',
+          'wo.work_order_responsible',
+          'wo.created_at',
+          'wo.updated_at',
+          'client.client_name',
+          'client.client_phone',
+          'user.user_name'
+        ])
+
+
+      if (showActives === "true") {
+        queryBuilder.andWhere('wo.status = true');
+      } else if (showActives === "false") {
+        queryBuilder.andWhere('wo.status = false');
+      }
+
+      if (responsible) {
+        queryBuilder.andWhere(`wo.work_order_responsible LIKE :responsible`, {
+          responsible: `%${responsible}%`
+        });
+      }
+      if (orderBy == SortingType.DATE) {
+        queryBuilder.orderBy('wo.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+      } else {
+        queryBuilder.orderBy('wo.product_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
+      }
+
+      return CustomPagination.getInstance().getPage(queryBuilder, filter)
+
+    } catch (error) {
+      this.logger.error(`findAll error: ${error.message}`, error.stack)
+      throw error;
+    }
   }
 
   async findById(id: number) {
