@@ -26,9 +26,8 @@ export class AuthController {
     @PublicRoute()
     @HttpCode(200)
     @UseGuards(LocalAuthGuard)
-    @ApiOperation({ description: '## Route to login - [Public]' })
+    @ApiOperation({ description: '## Rota que efetua login - [Public]', summary: 'Fazer login' })
     @ApiBody({
-        description: '## O twoFactorCode é uma variável `opcional`. O uso desta variável é `obrigatório` apenas quando o usuário ativa a autenticação de dois fatores.',
         type: LoginDTO
     })
     async auth(@Body() auth: LoginDTO) {

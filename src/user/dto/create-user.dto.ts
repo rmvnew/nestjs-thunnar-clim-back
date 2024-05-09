@@ -1,11 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, Length, Matches } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNotEmpty, Length, ValidateNested } from 'class-validator';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { IsValidPhone } from 'src/common/decorators/IsValidPhone.decorator';
+import { NoSpecialChars } from 'src/common/decorators/NoSpecialChars.decorator';
 
 export class CreateUserDto {
 
     @ApiProperty()
+    @IsNotEmpty()
     @Length(5, 50, { message: 'O Nome deve ter entre 5 e 50 caracteres.' })
+    @NoSpecialChars({ message: 'O nome não pode conter caracteres especiais, espaços duplos ou espaços no início/fim.' })
     user_name: string;
 
     @ApiProperty()
@@ -13,7 +18,8 @@ export class CreateUserDto {
     user_email: string;
 
     @ApiProperty()
-    @Matches(/^(?!([0-9])\1+$)[1-9]{2}9?[0-9]{8}$/, { message: 'O número de telefone deve ser válido e não deve conter todos os dígitos iguais.' })
+    // @Matches(/^(?!([0-9])\1+$)[1-9]{2}9?[0-9]{8}$/, { message: 'O número de telefone deve ser válido e não deve conter todos os dígitos iguais.' })
+    @IsValidPhone()
     user_phone: string;
 
     @ApiProperty()
@@ -26,8 +32,11 @@ export class CreateUserDto {
     @ApiProperty()
     user_date_of_birth: string;
 
-    @IsOptional()
-    address?: CreateAddressDto;
+    // @IsOptional()
+    @ValidateNested()
+    @ApiPropertyOptional({ type: CreateAddressDto })
+    @Type(() => CreateAddressDto)
+    address?: CreateAddressDto
 
 
 }

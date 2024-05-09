@@ -65,3 +65,43 @@ export enum UserGenderType {
 }
 
 
+export enum TypeDepartments {
+    USER = 'USER',
+    AUTH = 'AUTH',
+    CLIENT = 'CLIENT',
+    PRODUCT = 'PRODUCT',
+    PROVIDER = 'PROVIDER',
+    MOVEMENT = 'MOVEMENT',
+    MOVEMENT_ITENS = 'MOVEMENT_ITENS'
+}
+
+
+export enum TypeActions {
+    SIGNIN = 'SIGNIN',
+    SIGNOUT = 'SIGNOUT',
+    CREATE = 'CREATE',
+    UPDATE = 'UPDATE',
+    ACTIVATED = 'ACTIVATED',
+    DISABLED = 'DISABLED',
+    DELETE = 'DELETE',
+    INPUT = 'INPUT',
+    OUTPUT = 'OUTPUT'
+}
+
+export enum TypeOperation {
+    INPUT = 'INPUT',
+    OUTPUT = 'OUTPUT'
+}
+
+
+export enum TypeMessage {
+    NOT_FOUND = 'não foi encontrado!'
+}
+
+export enum TypeCondition {
+    OPEN = 'OPEN',
+    IN_PROGRESS = 'IN_PROGRESS',
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
+    CANCELED = 'CANCELED',
+}

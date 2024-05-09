@@ -67,7 +67,6 @@ export class Utils {
 
     getReadingDate(date: string) {
 
-        console.log('Date: ', date);
 
         const day = date.substring(6)
         const month = date.substring(4, 6)

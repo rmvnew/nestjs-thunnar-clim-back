@@ -57,7 +57,7 @@ export class AuthService {
 
 
 
-        if (!userSaved || userSaved.user_status === false) {
+        if (!userSaved || userSaved.status === false) {
             throw new UnauthorizedException('Invalid credentials.');
         }
 

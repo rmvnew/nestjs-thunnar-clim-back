@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { Transporter } from 'nodemailer';
 import { CodeRecoverInterface, DefaultMailInterface } from 'src/common/interfaces/email.interface';
 
 @Injectable()
 export class MailService {
+
+  private readonly logger = new Logger(MailService.name)
 
   private readonly transporter: Transporter;
 
@@ -49,39 +51,6 @@ export class MailService {
   }
 
 
-  //   wallcomeMesage(wellcome: WellcomeInterface) {
-
-
-  //     const mailOptions: SendCurrentMailInterface = {
-  //       to: wellcome.email,
-  //       from: 'HelPsi <helpsimanaus@outlook.com>',
-  //       subject: 'Seja Bem-Vindo ao Helpsi: Sua Jornada de Bem-Estar Começa Aqui',
-  //       html: `
-  //       <div style="font-family: Arial, sans-serif; border: 1px solid #e0e0e0; padding: 20px; max-width: 600px; margin: auto; background-color: #f9f9f9;">
-  //       <!-- Inserir logo aqui -->
-  //       <img src="https://github.com/rmvnew/rmvnew/blob/main/logo_oficial_2.png?raw=true" alt="Logo da Helpsi" style="display: block; margin: auto; width: 250px; height: 130px;">
-
-  //       <h2 style="color: #333;">Olá, ${wellcome.name}, seja muito bem-vindo!</h2>
-
-  //       <p>Estamos verdadeiramente felizes por você ter escolhido a Helpsi para ser sua parceira na jornada de autoconhecimento e bem-estar emocional.</p>
-
-  //       <p>Aqui, você encontrará um ambiente seguro, profissionais capacitados e uma comunidade dedicada a apoiá-lo em cada etapa do seu caminho.</p>
-
-  //       <p>Se tiver qualquer dúvida ou precisar de assistência, estamos sempre aqui para ajudar. Afinal, a sua saúde mental é nossa prioridade.</p>
-
-  //       <br>
-  //       <p>Com carinho,</p>
-  //       <p>Equipe do Helpsi</p>
-  //     </div>
-  // `
-  //     };
-
-  //     this.sendCurrentMail(mailOptions)
-
-  //   }
-
-
-
   async generalMail(general_mail: DefaultMailInterface) {
 
     const current_mail: DefaultMailInterface = {
@@ -101,9 +70,10 @@ export class MailService {
 
     this.transporter.sendMail(mail_options, (error, info) => {
       if (error) {
-        console.log('Error sending email:', error);
+        this.logger.error('Error sending email:', error);
+        throw error
       } else {
-        console.log('Email sent:', info.response);
+        this.logger.log('Email sent:', info.response);
       }
     });
 

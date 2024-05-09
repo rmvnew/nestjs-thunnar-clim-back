@@ -50,7 +50,7 @@ let AccessProfile = {
         ProfileValue.MANAGER_VALUE,
         ProfileValue.OWNER_VALUE
     ],
-    ADMIN_USER_MANAGER_OWNER: [
+    ALL: [
         ProfileValue.ADMIN_VALUE,
         ProfileValue.USER_VALUE,
         ProfileValue.MANAGER_VALUE,

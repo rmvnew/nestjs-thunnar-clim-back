@@ -1,26 +1,28 @@
 import { faker } from '@faker-js/faker/locale/pt_BR';
-import { BadRequestException, HttpException, HttpStatus, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { cpf } from 'cpf-cnpj-validator';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import * as QRCode from 'qrcode';
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
-import { SortingType, ValidType } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeDepartments, TypeMessage, ValidType } from 'src/common/Enums';
 import { Utils } from 'src/common/Utils';
 import { CustomDate } from 'src/common/custom.date';
 import { CodeRecoverInterface } from 'src/common/interfaces/email.interface';
 import { UserFake } from 'src/common/interfaces/fake.interface';
 import { RecoverInterface } from 'src/common/interfaces/recover.interface';
-import { customPagination } from 'src/common/pagination/custom.pagination';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
+import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { Validations } from 'src/common/validations';
+import { HistoricService } from 'src/historic/historic.service';
 import { MailService } from 'src/mail/mail.service';
 import { Repository } from 'typeorm';
 import { ProfileService } from './../profile/profile.service';
-import { FilterUser } from './dto/Filter.user';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Qrcode2fa } from './dto/qrcode.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FilterUser } from './dto/user.filter';
 import { UserEntity } from './entities/user.entity';
 
 @Injectable()
@@ -33,18 +35,19 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
-    private readonly ProfileService: ProfileService,
     private readonly profileService: ProfileService,
     private readonly mailservice: MailService,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
+    @Inject(forwardRef(() => HistoricService))
+    private historicService: HistoricService,
 
 
   ) { }
 
 
   //? No errors 
-  async create(createUserDto: CreateUserDto): Promise<any> {
+  async create(createUserDto: CreateUserDto, req?: RequestWithUser): Promise<any> {
 
     try {
 
@@ -70,20 +73,9 @@ export class UserService {
       user.user_name = user_name.toUpperCase()
 
       Validations.getInstance().validateWithRegex(
-        user.user_name,
-        ValidType.NO_MANY_SPACE,
-        ValidType.NO_SPECIAL_CHARACTER,
-        ValidType.IS_STRING
-      )
-
-      Validations.getInstance().validateWithRegex(
         user.user_email,
         ValidType.IS_EMAIL,
         ValidType.NO_SPACE
-      )
-
-      Validations.getInstance().verifyLength(
-        user.user_name, 'Name', 5, 40
       )
 
       const userIsRegistered = await this.findByName(user.user_name)
@@ -103,7 +95,7 @@ export class UserService {
       const profile = await this.profileService.findById(profile_id)
 
       user.profile = profile
-      user.user_status = true
+      user.status = true
       user.user_first_access = true
       user.setTwoFactorSecret()
       user.user_enrollment = Utils.getInstance().getEnrollmentCode()
@@ -113,8 +105,17 @@ export class UserService {
       const dateParts = user_date_of_birth.split("/");
       user.user_date_of_birth = new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0]));
 
-      const userSaved = this.userRepository.save(user)
+      const userSaved = await this.userRepository.save(user)
 
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        TypeActions.CREATE,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+        userSaved
+      )
+
+      return userSaved
 
     } catch (error) {
       this.logger.warn(`createUser error: ${error.message}`, error.stack);
@@ -139,7 +140,7 @@ export class UserService {
           'user.user_date_of_birth',
           'user.user_phone',
           'user.user_enrollment',
-          'user.user_status',
+          'user.status',
           'user.create_at',
           'user.update_at',
 
@@ -159,9 +160,9 @@ export class UserService {
 
 
       if (showActives === "true") {
-        userQueryBuilder.andWhere('user.user_status = true');
+        userQueryBuilder.andWhere('user.status = true');
       } else if (showActives === "false") {
-        userQueryBuilder.andWhere('user.user_status = false');
+        userQueryBuilder.andWhere('user.status = false');
       }
 
 
@@ -176,17 +177,7 @@ export class UserService {
         userQueryBuilder.orderBy('user.user_name', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       }
 
-      //^ Calcular o ponto de início (offset) para a paginação
-      const skip = (page - 1) * limit;
-
-      //^ Configurar a paginação na consulta
-      userQueryBuilder.skip(skip).take(limit);
-
-      //^ Realizar a consulta com paginação
-      const [result, total] = await userQueryBuilder.getManyAndCount();
-
-      //^ Chamar a função de paginação com os resultados e a contagem total
-      return customPagination(result, page, limit, total, route, sort, orderBy);
+      return CustomPagination.getInstance().getPage(userQueryBuilder, filter)
 
 
     } catch (error) {
@@ -257,11 +248,15 @@ export class UserService {
 
     try {
 
-      const user = await this.userRepository.createQueryBuilder('user')
-        .leftJoinAndSelect('user.profile', 'profile')
-        .where('user.user_id = :user_id', { user_id: id })
-        .getOne()
+      const user = await this.userRepository.findOne({
+        where: {
+          user_id: id
+        }, relations: ['profile', 'address']
+      })
 
+      if (!user) {
+        throw new NotFoundException(`O usuário ${TypeMessage.NOT_FOUND}`)
+      }
 
       return user
 
@@ -290,7 +285,11 @@ export class UserService {
   }
 
   //? No errors 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    req: RequestWithUser
+  ): Promise<UserEntity> {
 
     try {
 
@@ -300,14 +299,14 @@ export class UserService {
         user_profile_id: profile_id,
         user_date_of_birth,
         user_phone,
-        user_genre,
         user_cpf,
         user_rg,
-        psychologist_id
+        address
       } = updateUserDto
 
 
       const isRegistered = await this.findById(id)
+      const current_address = isRegistered.address
 
 
       if (!isRegistered) {
@@ -323,21 +322,23 @@ export class UserService {
 
         user.user_name = user_name.toUpperCase()
 
-        Validations.getInstance().validateWithRegex(
-          user.user_name,
-          ValidType.NO_MANY_SPACE,
-          ValidType.NO_SPECIAL_CHARACTER,
-          ValidType.IS_STRING
-        )
-
-        Validations.getInstance().verifyLength(
-          user.user_name, 'Name', 5, 40)
-
       }
 
       if (user_email) {
 
         user.user_email = user_email
+
+      }
+
+      if (address) {
+        current_address.address_zipcode = address.address_zipcode
+        current_address.address_city = address.address_city
+        current_address.address_district = address.address_district
+        current_address.address_state = address.address_state
+        current_address.address_street = address.address_street
+        current_address.address_home_number = address.address_home_number
+
+        user.address = current_address
 
       }
 
@@ -369,7 +370,15 @@ export class UserService {
 
 
 
-      await this.userRepository.save(user)
+      const userSaved = await this.userRepository.save(user)
+
+
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        TypeActions.UPDATE,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+      )
 
       return this.findById(id)
 
@@ -399,7 +408,7 @@ export class UserService {
   }
 
   //? No errors 
-  async changeStatus(id: string) {
+  async changeStatus(id: string, req: RequestWithUser) {
 
     try {
 
@@ -409,14 +418,20 @@ export class UserService {
         throw new NotFoundException(`User does not exist`)
       }
 
-      const { user_status: status } = userSaved
+      const { status: status } = userSaved
 
-      console.log(userSaved);
+      userSaved.status = status === true ? false : true
 
+      const current_user = await this.userRepository.save(userSaved)
 
-      userSaved.user_status = status === true ? false : true
+      this.historicService.historicRegister(
+        req,
+        TypeDepartments.USER,
+        current_user.status ? TypeActions.ACTIVATED : TypeActions.DISABLED,
+        `Registro manipulado -> id: ${userSaved.user_id} - Nome: ${userSaved.user_name}`,
+      )
 
-      return this.userRepository.save(userSaved)
+      return current_user
 
     } catch (error) {
       this.logger.error(`changeStatus error: ${error.message}`, error.stack)
@@ -578,6 +593,7 @@ export class UserService {
       setTimeout(async () => {
         await this.clearCode(user)
       }, 5 * 60 * 1000)
+
 
 
     } catch (error) {
