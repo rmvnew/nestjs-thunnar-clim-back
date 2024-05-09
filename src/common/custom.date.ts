@@ -23,6 +23,27 @@ export class CustomDate {
         }
     }
 
+    getFinalDateorder() {
+
+        let date = moment().tz('America/Manaus').add(30, 'days')
+
+        if (date.day() === 6) {
+
+            date.add(2, 'days')
+
+        } else if (date.day() === 0) {
+
+            date.add(1, 'days')
+
+        }
+
+        return {
+            date: date,
+            sql_date: date.format('YYYY-MM-DD'),
+            hour: date.format('HH:mm:ss')
+        }
+    }
+
 
     customNewAmDate(time: string) {
         return moment(time).tz('America/Manaus').format('HH:mm');
@@ -43,6 +64,8 @@ export class CustomDate {
         const nowInManaus = new Date(); // Data e hora atuais
         return subHours(nowInManaus, manausTimeOffset);
     }
+
+
 
 
 }

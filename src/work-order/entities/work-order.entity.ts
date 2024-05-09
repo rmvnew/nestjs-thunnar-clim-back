@@ -1,10 +1,11 @@
 import { Client } from "src/client/entities/client.entity";
+import { EntityBase } from "src/common/common_class/entity_base";
 import { Device } from "src/device/entities/device.entity";
 import { UserEntity } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_WORK_ORDER')
-export class WorkOrder {
+export class WorkOrder extends EntityBase {
 
     @PrimaryGeneratedColumn('uuid')
     work_order_id: string
@@ -12,17 +13,17 @@ export class WorkOrder {
     @Column()
     work_order_number: number
 
-    @Column()
+    @Column({ nullable: true })
     work_order_value: number
 
     @Column({ type: 'date' })
-    work_order_initial_date: Date
+    work_order_initial_date: string
 
-    @Column({ type: 'date' })
-    work_order_initial_expected_date: Date
+    @Column({ type: 'date', nullable: true })
+    work_order_initial_expected_date: string
 
-    @Column({ type: 'date' })
-    work_order_initial_end_date: Date
+    @Column({ type: 'date', nullable: true })
+    work_order_initial_end_date: string
 
     @Column()
     work_order_is_open: boolean
