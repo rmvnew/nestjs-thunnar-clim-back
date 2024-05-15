@@ -1,13 +1,14 @@
 import * as speakeasy from 'speakeasy';
 import { Address } from 'src/address/entities/address.entity';
+import { EntityBase } from 'src/common/common_class/entity_base';
 import { Historic } from 'src/historic/entities/historic.entity';
 import { Movement } from 'src/moviment/entities/movement.entity';
 import { ProfileEntity } from "src/profile/entities/profile.entity";
 import { WorkOrder } from 'src/work-order/entities/work-order.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('TB_USER')
-export class UserEntity {
+export class UserEntity extends EntityBase {
 
     @PrimaryGeneratedColumn('uuid')
     user_id: string
@@ -55,9 +56,6 @@ export class UserEntity {
     user_profile_id: string
 
     @Column()
-    status: boolean
-
-    @Column()
     user_first_access: boolean
 
     @ManyToOne(() => ProfileEntity, (profile) => profile.users)
@@ -66,12 +64,6 @@ export class UserEntity {
 
     @Column({ nullable: true })
     user_refresh_token: string;
-
-    @CreateDateColumn()
-    create_at: Date
-
-    @UpdateDateColumn()
-    update_at: Date
 
     @OneToOne(() => Address, { nullable: true, cascade: true, eager: true })
     @JoinColumn({ name: 'address_id' })
