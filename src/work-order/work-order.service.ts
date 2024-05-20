@@ -148,11 +148,57 @@ export class WorkOrderService {
     }
   }
 
-  async update(id: number, updateWorkOrderDto: UpdateWorkOrderDto) {
-    return `This action updates a #${id} workOrder`;
+  async update(id: string, updateWorkOrderDto: UpdateWorkOrderDto) {
+
+
+
+    const is_registered = await this.findById(id)
+
+    if (!is_registered) {
+      throw new NotFoundException(`Ordem de serviço não encontrada!`)
+    }
+
+    const { client_id, user_id, work_order_responsible: responsible } = updateWorkOrderDto
+
+    const work_order = await this.woRepository.preload({
+      work_order_id: id,
+      ...updateWorkOrderDto
+    })
+
+
+
+    if (client_id) {
+      const client = await this.clientService.findById(client_id)
+
+      if (!client) {
+        throw new NotFoundException(`Cliente não encontrado!`)
+      }
+
+      work_order.client = client
+    }
+
+
+    if (user_id) {
+      const user = await this.userService.findById(user_id)
+
+      if (!user) {
+        throw new NotFoundException(`Usuário não encontrado!`)
+
+      }
+      work_order.user = user
+    }
+
+    if (responsible) {
+      work_order.work_order_responsible = responsible.toUpperCase()
+
+    }
+
+    work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
+
+    return this.woRepository.save(work_order)
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return `This action removes a #${id} workOrder`;
   }
 }
