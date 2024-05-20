@@ -1,5 +1,6 @@
 import { Client } from "src/client/entities/client.entity";
 import { EntityBase } from "src/common/common_class/entity_base";
+import { TypeCondition } from "src/common/Enums";
 import { Device } from "src/device/entities/device.entity";
 import { UserEntity } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -24,6 +25,13 @@ export class WorkOrder extends EntityBase {
 
     @Column({ type: 'date', nullable: true })
     work_order_initial_end_date: string
+
+    @Column({
+        type: 'enum',
+        enum: TypeCondition,
+        default: TypeCondition.PENDING,
+    })
+    work_order_status_condition: TypeCondition;
 
     @Column()
     work_order_is_open: boolean

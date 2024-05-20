@@ -56,11 +56,11 @@ export class WorkOrderController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateWorkOrderDto: UpdateWorkOrderDto) {
-    return this.workOrderService.update(+id, updateWorkOrderDto);
+    return this.workOrderService.update(id, updateWorkOrderDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.workOrderService.remove(+id);
+    return this.workOrderService.remove(id);
   }
 }

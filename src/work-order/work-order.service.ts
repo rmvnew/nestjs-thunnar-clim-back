@@ -2,7 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
 import { CustomDate } from 'src/common/custom.date';
-import { SortingType } from 'src/common/Enums';
+import { SortingType, TypeCondition } from 'src/common/Enums';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
@@ -49,6 +49,7 @@ export class WorkOrderService {
     work_order.work_order_is_open = true
     work_order.client = client
     work_order.user = user
+    work_order.work_order_status_condition = TypeCondition.OPEN
     work_order.work_order_number = order_number
     work_order.work_order_responsible = responsible.toUpperCase()
     work_order.work_order_initial_date = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
