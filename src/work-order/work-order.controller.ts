@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
@@ -54,8 +54,11 @@ export class WorkOrderController {
     return this.workOrderService.findById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkOrderDto: UpdateWorkOrderDto) {
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateWorkOrderDto: UpdateWorkOrderDto
+  ) {
     return this.workOrderService.update(id, updateWorkOrderDto);
   }
 

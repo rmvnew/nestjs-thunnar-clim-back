@@ -75,6 +75,7 @@ export class WorkOrderService {
           'wo.work_order_value',
           'wo.work_order_initial_date',
           'wo.work_order_initial_expected_date',
+          'wo.work_order_status_condition',
           'wo.work_order_responsible',
           'wo.created_at',
           'wo.updated_at',
@@ -97,6 +98,7 @@ export class WorkOrderService {
           responsible: `%${responsible}%`
         });
       }
+
       if (orderBy == SortingType.DATE) {
         queryBuilder.orderBy('wo.created_at', `${sort === 'DESC' ? 'DESC' : 'ASC'}`);
       } else {
@@ -121,6 +123,7 @@ export class WorkOrderService {
           "work_order.work_order_id",
           "work_order.work_order_number",
           "work_order.work_order_value",
+          "work_order.work_order_status_condition",
           "work_order.work_order_initial_date",
           "work_order.work_order_initial_expected_date",
           "work_order.work_order_initial_end_date",

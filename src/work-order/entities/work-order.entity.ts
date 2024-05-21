@@ -29,7 +29,7 @@ export class WorkOrder extends EntityBase {
     @Column({
         type: 'enum',
         enum: TypeCondition,
-        default: TypeCondition.PENDING,
+        default: TypeCondition.OPEN,
     })
     work_order_status_condition: TypeCondition;
 
