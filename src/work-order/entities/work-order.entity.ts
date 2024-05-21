@@ -1,6 +1,7 @@
 import { Client } from "src/client/entities/client.entity";
 import { EntityBase } from "src/common/common_class/entity_base";
 import { TypeCondition } from "src/common/Enums";
+import { Company } from "src/company/entities/company.entity";
 import { Device } from "src/device/entities/device.entity";
 import { UserEntity } from "src/user/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -50,6 +51,9 @@ export class WorkOrder extends EntityBase {
     @OneToMany(() => Device, device => device.workOrder)
     devices: Device[];
 
+    @ManyToOne(() => Company, company => company.work_orders)
+    @JoinColumn({ name: 'company_id' })
+    company: Company
 
 
 
