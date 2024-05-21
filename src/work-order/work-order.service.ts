@@ -194,7 +194,6 @@ export class WorkOrderService {
 
     if (responsible) {
       work_order.work_order_responsible = responsible.toUpperCase()
-
     }
 
     work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
@@ -202,7 +201,20 @@ export class WorkOrderService {
     return this.woRepository.save(work_order)
   }
 
-  async remove(id: string) {
-    return `This action removes a #${id} workOrder`;
+  async changeStatusCondition(condition: TypeCondition, id: string) {
+
+
+    const wOrder = await this.findById(id)
+
+    if (!wOrder) {
+
+      throw new NotFoundException(`Ordem de serviço não encontrada!`)
+
+    }
+
+    wOrder.work_order_status_condition = condition
+
+    return this.woRepository.save(wOrder)
   }
+
 }

@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
+import { TypeCondition } from 'src/common/Enums';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
 import { UpdateWorkOrderDto } from './dto/update-work-order.dto';
 import { FilterWorkOrder } from './dto/workOrder.filter';
@@ -62,8 +63,23 @@ export class WorkOrderController {
     return this.workOrderService.update(id, updateWorkOrderDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workOrderService.remove(id);
+  @Put('status-condition/:id')
+  async updateStatusCondition(
+    @Param('id') id: string,
+    @Query('condition') condition: string
+  ) {
+    const enumCondition = this.validateAndConvertCondition(condition)
+    return this.workOrderService.changeStatusCondition(enumCondition, id);
   }
+
+
+  private validateAndConvertCondition(condition: string): TypeCondition {
+
+    if (!(condition in TypeCondition)) {
+      throw new BadRequestException(`Invalid condition: ${condition}`)
+    }
+    return TypeCondition[condition as keyof typeof TypeCondition]
+
+  }
+
 }
