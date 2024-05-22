@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
@@ -24,27 +24,23 @@ export class CompanyController {
     description: '## Schema padrão para criar uma Empresa.',
     type: CreateCompanyDto
   })
-  create(@Body() createCompanyDto: CreateCompanyDto) {
+  async create(@Body() createCompanyDto: CreateCompanyDto) {
     return this.companyService.create(createCompanyDto);
   }
 
   @Get()
-  findAll() {
-    return this.companyService.findAll();
+  async findAll() {
+    return this.companyService.findCompany();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companyService.findById(+id);
+
+
+  @Put()
+  async update(
+    @Body() updateCompanyDto: UpdateCompanyDto
+  ) {
+    return this.companyService.update(updateCompanyDto);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDto: UpdateCompanyDto) {
-    return this.companyService.update(+id, updateCompanyDto);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyService.remove(+id);
-  }
 }
