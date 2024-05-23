@@ -1,9 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
 import { CustomDate } from 'src/common/custom.date';
 import { SortingType, TypeCondition } from 'src/common/Enums';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
+import { CompanyService } from 'src/company/company.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
@@ -20,7 +21,8 @@ export class WorkOrderService {
     @InjectRepository(WorkOrder)
     private readonly woRepository: Repository<WorkOrder>,
     private readonly clientService: ClientService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly companyService: CompanyService
   ) { }
 
   async create(createWorkOrderDto: CreateWorkOrderDto) {
@@ -45,6 +47,15 @@ export class WorkOrderService {
     }
 
 
+    const current_company = await this.companyService.findCompany()
+
+    if (current_company.length === 0) {
+      throw new BadRequestException(`Dados da empresa não encontrados!`)
+    }
+
+    const [company] = current_company
+
+
     const work_order = this.woRepository.create(createWorkOrderDto)
     work_order.work_order_is_open = true
     work_order.client = client
@@ -57,6 +68,7 @@ export class WorkOrderService {
     work_order.status = true
     work_order.created_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
     work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
+    work_order.company = company
 
     return this.woRepository.save(work_order)
   }
@@ -68,6 +80,7 @@ export class WorkOrderService {
       const queryBuilder = this.woRepository.createQueryBuilder('wo')
         .leftJoinAndSelect('wo.devices', 'devices')
         .leftJoinAndSelect('wo.client', 'client')
+        .leftJoinAndSelect('wo.company', 'company')
         .leftJoinAndSelect('wo.user', 'user')
         .select([
           'wo.work_order_id',
@@ -84,7 +97,10 @@ export class WorkOrderService {
           'client.client_phone',
           'user.user_id',
           'user.user_name'
-        ]).addSelect('devices')
+        ])
+        .addSelect('devices')
+        .addSelect('company')
+
 
 
       if (showActives === "true") {
@@ -119,6 +135,7 @@ export class WorkOrderService {
       const res = await this.woRepository.createQueryBuilder("work_order")
         .leftJoinAndSelect("work_order.client", "client")
         .leftJoinAndSelect("work_order.user", "user")
+        .leftJoinAndSelect("work_order.company", "company")
         .select([
           "work_order.work_order_id",
           "work_order.work_order_number",
@@ -136,6 +153,7 @@ export class WorkOrderService {
           "user.user_id",
           "user.user_name"
         ])
+        .addSelect('company')
         .where("work_order.work_order_id = :id", { id })
         .getOne();
 

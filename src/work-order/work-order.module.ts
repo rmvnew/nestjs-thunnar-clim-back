@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientModule } from 'src/client/client.module';
+import { CompanyModule } from 'src/company/company.module';
 import { UserModule } from 'src/user/user.module';
 import { WorkOrder } from './entities/work-order.entity';
 import { WorkOrderController } from './work-order.controller';
@@ -10,7 +11,8 @@ import { WorkOrderService } from './work-order.service';
   imports: [
     TypeOrmModule.forFeature([WorkOrder]),
     ClientModule,
-    UserModule
+    UserModule,
+    CompanyModule
   ],
   controllers: [WorkOrderController],
   providers: [WorkOrderService],
