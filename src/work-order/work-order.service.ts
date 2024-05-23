@@ -2,9 +2,11 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientService } from 'src/client/client.service';
 import { CustomDate } from 'src/common/custom.date';
-import { SortingType, TypeCondition } from 'src/common/Enums';
+import { SortingType, TypeActions, TypeCondition, TypeDepartments } from 'src/common/Enums';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CustomPagination } from 'src/common/pagination/custon.pagination';
 import { CompanyService } from 'src/company/company.service';
+import { HistoricService } from 'src/historic/historic.service';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
@@ -22,10 +24,12 @@ export class WorkOrderService {
     private readonly woRepository: Repository<WorkOrder>,
     private readonly clientService: ClientService,
     private readonly userService: UserService,
-    private readonly companyService: CompanyService
+    private readonly companyService: CompanyService,
+    private readonly historicService: HistoricService
+
   ) { }
 
-  async create(createWorkOrderDto: CreateWorkOrderDto) {
+  async create(createWorkOrderDto: CreateWorkOrderDto, req: RequestWithUser) {
 
     const { client_id, user_id, work_order_responsible: responsible } = createWorkOrderDto
 
@@ -70,7 +74,17 @@ export class WorkOrderService {
     work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
     work_order.company = company
 
-    return this.woRepository.save(work_order)
+    const wo_saved = await this.woRepository.save(work_order)
+
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.WORK_ORDER,
+      TypeActions.CREATE,
+      `Registro manipulado -> id: ${wo_saved.work_order_id} - Número da Ordem: ${wo_saved.work_order_number} - Nome: ${wo_saved.work_order_responsible}`
+    )
+
+    return wo_saved
+
   }
 
   async findAll(filter: FilterWorkOrder) {
@@ -170,9 +184,7 @@ export class WorkOrderService {
     }
   }
 
-  async update(id: string, updateWorkOrderDto: UpdateWorkOrderDto) {
-
-
+  async update(id: string, updateWorkOrderDto: UpdateWorkOrderDto, req: RequestWithUser) {
 
     const is_registered = await this.findById(id)
 
@@ -216,10 +228,19 @@ export class WorkOrderService {
 
     work_order.updated_at = CustomDate.getInstance().getNewDateInTheAmazonTimeZone().date.format('YYYY-MM-DD HH:mm:ss')
 
-    return this.woRepository.save(work_order)
+    const wo_saved = await this.woRepository.save(work_order)
+
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.WORK_ORDER,
+      TypeActions.UPDATE,
+      `Registro manipulado -> id: ${wo_saved.work_order_id} - Número da Ordem: ${wo_saved.work_order_number} - Nome: ${wo_saved.work_order_responsible}`
+    )
+
+    return wo_saved
   }
 
-  async changeStatusCondition(condition: TypeCondition, id: string) {
+  async changeStatusCondition(condition: TypeCondition, id: string, req: RequestWithUser) {
 
 
     const wOrder = await this.findById(id)
@@ -232,7 +253,16 @@ export class WorkOrderService {
 
     wOrder.work_order_status_condition = condition
 
-    return this.woRepository.save(wOrder)
+    const wo_saved = await this.woRepository.save(wOrder)
+
+    this.historicService.historicRegister(
+      req,
+      TypeDepartments.WORK_ORDER,
+      TypeActions.CHANGE_STATUS,
+      `Registro manipulado -> id: ${wo_saved.work_order_id} - Número da Ordem: ${wo_saved.work_order_number} - Status Condition: ${wo_saved.work_order_status_condition}`
+    )
+
+    return wo_saved
   }
 
 }

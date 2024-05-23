@@ -1,8 +1,9 @@
-import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import AccessProfile from 'src/auth/enums/permission.type';
 import { PermissionGuard } from 'src/auth/shared/guards/permission.guard';
 import { TypeCondition } from 'src/common/Enums';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
 import { UpdateWorkOrderDto } from './dto/update-work-order.dto';
 import { FilterWorkOrder } from './dto/workOrder.filter';
@@ -26,8 +27,11 @@ export class WorkOrderController {
     description: '## Schema padrão para criar uma nova ordem.',
     type: CreateWorkOrderDto
   })
-  async create(@Body() createWorkOrderDto: CreateWorkOrderDto) {
-    return this.workOrderService.create(createWorkOrderDto);
+  async create(
+    @Req() req: RequestWithUser,
+    @Body() createWorkOrderDto: CreateWorkOrderDto
+  ) {
+    return this.workOrderService.create(createWorkOrderDto, req);
   }
 
   @Get()
@@ -57,19 +61,21 @@ export class WorkOrderController {
 
   @Put(':id')
   async update(
+    @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Body() updateWorkOrderDto: UpdateWorkOrderDto
   ) {
-    return this.workOrderService.update(id, updateWorkOrderDto);
+    return this.workOrderService.update(id, updateWorkOrderDto, req);
   }
 
   @Put('status-condition/:id')
   async updateStatusCondition(
+    @Req() req: RequestWithUser,
     @Param('id') id: string,
     @Query('condition') condition: string
   ) {
     const enumCondition = this.validateAndConvertCondition(condition)
-    return this.workOrderService.changeStatusCondition(enumCondition, id);
+    return this.workOrderService.changeStatusCondition(enumCondition, id, req);
   }
 
 

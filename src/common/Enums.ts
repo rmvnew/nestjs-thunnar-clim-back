@@ -72,7 +72,8 @@ export enum TypeDepartments {
     PRODUCT = 'PRODUCT',
     PROVIDER = 'PROVIDER',
     MOVEMENT = 'MOVEMENT',
-    MOVEMENT_ITENS = 'MOVEMENT_ITENS'
+    MOVEMENT_ITENS = 'MOVEMENT_ITENS',
+    WORK_ORDER = 'WORK_ORDER'
 }
 
 
@@ -85,7 +86,8 @@ export enum TypeActions {
     DISABLED = 'DISABLED',
     DELETE = 'DELETE',
     INPUT = 'INPUT',
-    OUTPUT = 'OUTPUT'
+    OUTPUT = 'OUTPUT',
+    CHANGE_STATUS = 'CHANGE_STATUS'
 }
 
 export enum TypeOperation {
