@@ -169,22 +169,7 @@ export class UserController {
     return this.userService.deleteUser(id)
   }
 
-  //^ GER 2FA QRCODE
-  @Get('/qrcode-2fa/:id')
-  @UseGuards(PermissionGuard(AccessProfile.ALL))
-  @ApiExcludeEndpoint()
-  @ApiOperation({
-    summary: 'Gera código para autenticação de 2 fatores.',
-    description: `# Esta rota obtém os dados para gerar o qr-code.
-    Descrição: Este qr-code é usado para configurar o aplicativo que gera token.
-    Tipo: Autenticada. 
-    Acesso: [Todos]` })
-  @ApiParam({ name: 'id', description: '### Id do usuário. ' })
-  async getQrCode(
-    @Param('id') id: string
-  ) {
-    return this.userService.generate2FAQRCode(id)
-  }
+  
 
 
   //^ ENABLE OR DISABLE 2FA

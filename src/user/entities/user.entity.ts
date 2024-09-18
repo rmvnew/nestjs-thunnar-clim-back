@@ -31,39 +31,15 @@ export class UserEntity extends EntityBase {
     @Column({ nullable: true })
     user_cpf?: string
 
-    @Column({ nullable: true })
-    user_enrollment?: string
-
-    @Column({ nullable: true })
-    user_recovery_code: number
-
-    @Column({ nullable: true })
-    user_attempts_to_recover: number
-
-    @Column({ nullable: true })
-    user_recovery_date: Date
-
-    @Column({ nullable: true })
-    user_2fa_secret: string
-
-    @Column({ default: false })
-    user_2fa_active: boolean
-
     @Column({ nullable: false })
     user_password: string
 
     @Column()
     user_profile_id: string
 
-    @Column()
-    user_first_access: boolean
-
     @ManyToOne(() => ProfileEntity, (profile) => profile.users)
     @JoinColumn({ name: 'user_profile_id' })
     profile: ProfileEntity
-
-    @Column({ nullable: true })
-    user_refresh_token: string;
 
     @OneToOne(() => Address, { nullable: true, cascade: true, eager: true })
     @JoinColumn({ name: 'address_id' })
@@ -78,7 +54,5 @@ export class UserEntity extends EntityBase {
     @OneToMany(() => WorkOrder, workOrder => workOrder.user)
     work_orders: WorkOrder[];
 
-    setTwoFactorSecret() {
-        this.user_2fa_secret = speakeasy.generateSecret({ length: 20 }).base32
-    }
+   
 }

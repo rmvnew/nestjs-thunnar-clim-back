@@ -1,15 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { DeviceService } from './device.service';
 import { CreateDeviceDto } from './dto/create-device.dto';
 import { UpdateDeviceDto } from './dto/update-device.dto';
+import { RequestWithUser } from 'src/common/interfaces/user.request.interface';
 
 @Controller('device')
 export class DeviceController {
   constructor(private readonly deviceService: DeviceService) {}
 
   @Post()
-  create(@Body() createDeviceDto: CreateDeviceDto) {
-    return this.deviceService.create(createDeviceDto);
+  create(
+    @Req() req: RequestWithUser,
+    @Body() createDeviceDto: CreateDeviceDto
+  ) {
+    return this.deviceService.create(createDeviceDto,req);
   }
 
   @Get()

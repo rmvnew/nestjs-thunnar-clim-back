@@ -96,10 +96,8 @@ export class UserService {
 
       user.profile = profile
       user.status = true
-      user.user_first_access = true
-      user.setTwoFactorSecret()
-      user.user_enrollment = Utils.getInstance().getEnrollmentCode()
-      user.user_2fa_active = false
+      
+      
 
 
       const dateParts = user_date_of_birth.split("/");
@@ -454,7 +452,7 @@ export class UserService {
         throw new NotFoundException(`user with id ${id} does not exist`)
       }
 
-      user.user_refresh_token = refresh_token
+      
 
       await this.userRepository.save(user)
 
@@ -479,11 +477,11 @@ export class UserService {
         throw new NotFoundException(`user with id ${id} does not exist`)
       }
 
-      const { user_first_access: status } = userSaved
+      
 
       if (status) {
 
-        userSaved.user_first_access = false
+       
 
         await this.userRepository.save(userSaved)
 
@@ -515,7 +513,7 @@ export class UserService {
       const user = await this.userRepository.findOne({
         where: {
           user_email: email,
-          user_recovery_code: code
+         
         }
       })
 
@@ -524,7 +522,7 @@ export class UserService {
       }
 
       user.user_password = await Utils.getInstance().encryptPassword(password)
-      user.user_recovery_code = null
+      
 
       this.userRepository.save(user)
 
@@ -576,8 +574,7 @@ export class UserService {
 
       const code = this.generateCode()
 
-      user.user_recovery_code = code
-      user.user_recovery_date = new Date()
+     
 
 
       await this.userRepository.save(user)
@@ -606,7 +603,7 @@ export class UserService {
 
   //? No errors 
   async clearCode(user: UserEntity) {
-    user.user_recovery_code = null
+   
     await this.userRepository.save(user)
   }
 
@@ -619,23 +616,7 @@ export class UserService {
     return randomNumber
   }
 
-  //? No errors 
-  async generate2FAQRCode(user_id: string): Promise<string> {
-
-    const user = await this.userRepository.findOne({
-      where: {
-        user_id: user_id
-      }
-    })
-
-    const otpauth = speakeasy.otpauthURL({
-      secret: user.user_2fa_secret,
-      label: `Thunnar:${user.user_email}`,
-      algorithm: 'sha1'
-    });
-
-    return QRCode.toDataURL(otpauth);
-  }
+  
 
   //? No errors 
   async generate2fa(user_id: string, qrcode2fa: Qrcode2fa) {
@@ -648,14 +629,13 @@ export class UserService {
         }
       })
 
-      status ? user.setTwoFactorSecret() : user.user_2fa_secret = ''
-      user.user_2fa_active = status
+     
 
       await this.userRepository.save(user)
 
       const customPromisse = new Promise((resolve) => {
         if (status === true) {
-          resolve(this.generate2FAQRCode(user_id))
+         
         } else {
           resolve('Authenticação de dois fatores desabilitada')
         }

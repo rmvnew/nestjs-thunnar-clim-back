@@ -73,7 +73,8 @@ export enum TypeDepartments {
     PROVIDER = 'PROVIDER',
     MOVEMENT = 'MOVEMENT',
     MOVEMENT_ITENS = 'MOVEMENT_ITENS',
-    WORK_ORDER = 'WORK_ORDER'
+    WORK_ORDER = 'WORK_ORDER',
+    DEVICE = 'DEVICE'
 }
 
 

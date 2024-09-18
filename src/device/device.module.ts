@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HistoricModule } from 'src/historic/historic.module';
+import { WorkOrderModule } from 'src/work-order/work-order.module';
 import { DeviceController } from './device.controller';
 import { DeviceService } from './device.service';
 import { Device } from './entities/device.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Device])
+    TypeOrmModule.forFeature([Device]),
+    WorkOrderModule,
+    HistoricModule
   ],
   controllers: [DeviceController],
   providers: [DeviceService],

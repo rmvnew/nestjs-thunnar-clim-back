@@ -102,15 +102,10 @@ export class AuthService {
             throw new HttpException('User with this enrollment does not exist', HttpStatus.NOT_FOUND);
         }
 
-        if (!user.user_refresh_token) {
-            throw new HttpException('Refresh token does not exist on this user', HttpStatus.NOT_FOUND);
-        }
+       
 
-        const verifyIfMatchHash = await isMatchHash(refreshToken, user.user_refresh_token);
+        
 
-        if (!verifyIfMatchHash) {
-            throw new HttpException('User with this enrollment does not exist', HttpStatus.NOT_FOUND);
-        }
 
         const { access_token, refresh_token } = await this.getTokens(user)
 
